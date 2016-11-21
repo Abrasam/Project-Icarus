@@ -1,6 +1,6 @@
 package com.sam.hab.txrx;
 
-import com.sam.hab.lora.Constants;
+import com.sam.hab.lora.Constants.*;
 import com.sam.hab.lora.LoRa;
 
 import java.io.IOException;
@@ -20,31 +20,40 @@ public class CycleManager {
 
     public CycleManager() {
         try {
-            this.lora = new LoRa(869.850, Constants.Bandwidth.BW250, (short) 7, Constants.CodingRate.CR4_5, true) {
+            this.lora = new LoRa(869.850, Bandwidth.BW250, (short) 7, CodingRate.CR4_5, true) {
                 @Override
                 public void onRxDone() {
                     try {
                         receiveQueue.add(String.valueOf(super.readPayload()));
+                        super.resetRXPtr();
+                        super.setMode(Mode.RX);
                     } catch (IOException e) {
+                    } catch (InterruptedException e) {
                     }
                 }
 
                 @Override
                 public void onTxDone() {
+                    count++;
+                    if (count >= 10) {
+                        count = 0;
 
+                    }
                 }
             };
         } catch (IOException e) {
-            throw new RuntimeException("LoRa module failed to initialise, check your wiring perhaos?");
+            throw new RuntimeException("LoRa module failed to initialise, check your wiring perhaps?");
         }
     }
 
-    public boolean prepTx(String packet) {
-        if (transmitQueue.size() < 10) {
-            transmitQueue.add(packet);
-            return true;
+    public boolean isTxFull() {
+        return transmitQueue.size() >= 10;
+    }
+
+    public void addToTx(String payload) {
+        if (!isTxFull()) {
+            transmitQueue.add(payload);
         }
-        return false;
     }
 
     public String getNextReceived() {
@@ -53,13 +62,4 @@ public class CycleManager {
         }
         return null;
     }
-
-    public void changeToReceive() {
-
-    }
-
-    public void changeToTransmit() {
-
-    }
-
 }
