@@ -104,5 +104,14 @@ public class Constants {
         private PacketType(int id) {
             this.id = id;
         }
+
+        public static PacketType lookup(int i) {
+            for (PacketType type : PacketType.values()) {
+                if (type.id == i) {
+                    return type;
+                }
+            }
+            return null;
+        }
     }
 }
