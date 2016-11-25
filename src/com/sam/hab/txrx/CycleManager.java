@@ -1,7 +1,10 @@
 package com.sam.hab.txrx;
 
+import com.sam.hab.lora.Constants;
 import com.sam.hab.lora.Constants.*;
 import com.sam.hab.lora.LoRa;
+import com.sam.hab.lora.LoRaReceiver;
+import com.sam.hab.lora.LoRaTransmitter;
 
 import java.io.IOException;
 import java.util.LinkedList;
@@ -12,37 +15,17 @@ public class CycleManager {
     private Queue<String> transmitQueue = new LinkedList<String>();
     private Queue<String> receiveQueue = new LinkedList<String>();
 
-    private LoRa lora;
-
-    private int count;
+    private LoRaTransmitter loraSend;
+    private LoRaReceiver loraReceive;
 
     private boolean transmitting;
 
     public CycleManager() {
         try {
-            this.lora = new LoRa(869.850, Bandwidth.BW250, (short) 7, CodingRate.CR4_5, true) {
-                @Override
-                public void onRxDone() {
-                    try {
-                        receiveQueue.add(String.valueOf(super.readPayload()));
-                        super.resetRXPtr();
-                        super.setMode(Mode.RX);
-                    } catch (IOException e) {
-                    } catch (InterruptedException e) {
-                    }
-                }
-
-                @Override
-                public void onTxDone() {
-                    count++;
-                    if (count >= 10) {
-                        count = 0;
-
-                    }
-                }
-            };
+            loraSend = new LoRaTransmitter(869.850, Bandwidth.BW250, (short)7, CodingRate.CR4_5, true);
+            loraReceive = new LoRaReceiver(869.850, Bandwidth.BW250, (short)7, CodingRate.CR4_5, true);
         } catch (IOException e) {
-            throw new RuntimeException("LoRa module failed to initialise, check your wiring perhaps?");
+            throw new RuntimeException("LoRa module contact not established, check your wiring?");
         }
     }
 
@@ -61,5 +44,17 @@ public class CycleManager {
             return receiveQueue.poll();
         }
         return null;
+    }
+
+    public void switchMode(Mode mode) throws IOException {
+        if (mode == Mode.TX) {
+
+        } else if (mode == Mode.TX) {
+
+        }
+    }
+
+    public void addToRx(byte[] payload) {
+        receiveQueue.add(String.valueOf(payload));
     }
 }

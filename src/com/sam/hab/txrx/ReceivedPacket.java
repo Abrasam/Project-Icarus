@@ -1,6 +1,11 @@
 package com.sam.hab.txrx;
 
 import com.sam.hab.lora.Constants.*;
+import com.sam.hab.main.IcarusMain;
+
+import java.io.IOException;
+
+import static com.sam.hab.lora.Constants.PacketType.*;
 
 public class ReceivedPacket {
 
@@ -17,6 +22,10 @@ public class ReceivedPacket {
     }
 
     public void handle() {
+        switch (this.type) {
+            case CMD:
 
+                break;
+        }
     }
 }
