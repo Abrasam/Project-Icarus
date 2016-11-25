@@ -30,4 +30,7 @@ public class PacketParser {
         String packetList[] = packet.split(",");
         return new ReceivedTelemetry(raw, Float.valueOf(packetList[3]), Float.valueOf(packetList[4]), Float.valueOf(packetList[5]), Float.valueOf(packetList[1]));
     }
+
+    public static void parseCommand(String data) {
+    }
 }

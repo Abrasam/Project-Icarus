@@ -9,11 +9,13 @@ import com.pi4j.io.spi.SpiFactory;
 
 import com.pi4j.wiringpi.Gpio;
 import com.sam.hab.lora.Constants.*;
+import com.sam.hab.main.IcarusMain;
+import com.sam.hab.txrx.CycleManager;
 
 import java.io.IOException;
 import java.util.Arrays;
 
-public abstract class LoRa {
+public class LoRa {
 
     private double frequency;
     private Bandwidth bandwidth;
@@ -24,7 +26,10 @@ public abstract class LoRa {
     private SpiDevice spi = null;
     public final GpioController gpio;
     private final GpioPinDigitalInput dio0;
+    private final CycleManager cm;
     private DIOMode dioMapping = DIOMode.RXDONE;
+    private int transmitPtr;
+    private String[] transmit;
 
     /**
      * Constructor for the LoRa interface class. Parameters are the modem settings for the radio.
@@ -34,12 +39,14 @@ public abstract class LoRa {
      * @param codingRate
      * @param explicitHeader
      */
-    public LoRa(double frequency, Bandwidth bandwidth, short spreadingFactor, CodingRate codingRate, boolean explicitHeader) throws IOException {
+    public LoRa(double frequency, Bandwidth bandwidth, short spreadingFactor, CodingRate codingRate, boolean explicitHeader, CycleManager cm) throws IOException {
         this.frequency = frequency;
         this.bandwidth = bandwidth;
         this.spreadingFactor = spreadingFactor;
         this.codingRate = codingRate;
         this.explicitHeader = explicitHeader;
+
+        this.cm = cm;
 
         spi = SpiFactory.getInstance(SpiChannel.CS0, SpiDevice.DEFAULT_SPI_SPEED, SpiDevice.DEFAULT_SPI_MODE);
         gpio = GpioFactory.getInstance();
@@ -83,14 +90,43 @@ public abstract class LoRa {
     }
 
     /**
-     * Abstract method for user to implement, called when transmit done.
+     * Method called when transmit done.
      */
-    public abstract void onTxDone();
+    public void onTxDone() {
+        transmitPtr++;
+        if (transmitPtr > transmit.length - 1 || transmit[transmitPtr] == null) {
+            try {
+                cm.switchMode(Mode.RX);
+            } catch (IOException e) {
+                //Error here?
+            }
+            try {
+                setMode(Mode.SLEEP);
+            } catch (IOException e) {
+                //Error here?
+            }
+        } else {
+            try {
+                writePayload(transmit[transmitPtr].getBytes());
+                setMode(Mode.TX);
+            } catch (IOException e) {
+                //Error here?
+            }
+
+        }
+    }
 
     /**
-     * Abstract method for user to implement, called when receive done.
+     * Called when packet is received.
      */
-    public abstract void onRxDone();
+    public void onRxDone() {
+        try {
+            byte[] payload = readPayload();
+            IcarusMain.cycleManager.addToRx(payload);
+        } catch (IOException e) {
+            //Error?
+        }
+    }
 
     /**
      * Used for all writing of registers via the SPI interface.
@@ -292,5 +328,18 @@ public abstract class LoRa {
     public void resetRXPtr() throws IOException, InterruptedException {
         byte baseAddr = readRegister(Register.FIFORXBASEADDR, 1)[1];
         setFifoPointer(baseAddr);
+    }
+
+    /**
+     * Set the radio to begin transmission of 10 strings.
+     * @param transmitList
+     * @throws IOException
+     */
+    public void send(String[] transmitList) throws IOException {
+        setDIOMapping(DIOMode.TXDONE);
+        writePayload(transmitList[0].getBytes());
+        this.transmitPtr = 1;
+        this.transmit = transmitList;
+        setMode(Mode.TX);
     }
 }

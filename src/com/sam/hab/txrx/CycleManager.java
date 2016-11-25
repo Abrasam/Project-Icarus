@@ -1,10 +1,7 @@
 package com.sam.hab.txrx;
 
-import com.sam.hab.lora.Constants;
 import com.sam.hab.lora.Constants.*;
 import com.sam.hab.lora.LoRa;
-import com.sam.hab.lora.LoRaReceiver;
-import com.sam.hab.lora.LoRaTransmitter;
 
 import java.io.IOException;
 import java.util.LinkedList;
@@ -15,15 +12,13 @@ public class CycleManager {
     private Queue<String> transmitQueue = new LinkedList<String>();
     private Queue<String> receiveQueue = new LinkedList<String>();
 
-    private LoRaTransmitter loraSend;
-    private LoRaReceiver loraReceive;
+    private LoRa lora;
 
     private boolean transmitting;
 
     public CycleManager() {
         try {
-            loraSend = new LoRaTransmitter(869.850, Bandwidth.BW250, (short)7, CodingRate.CR4_5, true);
-            loraReceive = new LoRaReceiver(869.850, Bandwidth.BW250, (short)7, CodingRate.CR4_5, true);
+            lora = new LoRa(869.850, Bandwidth.BW250, (short)7, CodingRate.CR4_5, true);
         } catch (IOException e) {
             throw new RuntimeException("LoRa module contact not established, check your wiring?");
         }
@@ -48,7 +43,15 @@ public class CycleManager {
 
     public void switchMode(Mode mode) throws IOException {
         if (mode == Mode.TX) {
-
+            lora.setMode(Mode.SLEEP);
+            String[] transmit = new String[10];
+            for (int i = 0; i < 10; i++) {
+                if (transmitQueue.size() <= 0) {
+                    break;
+                }
+                transmit[i] = transmitQueue.poll();
+            }
+            lora.send(transmit);
         } else if (mode == Mode.TX) {
 
         }
