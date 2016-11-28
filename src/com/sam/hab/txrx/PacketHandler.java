@@ -1,7 +1,6 @@
 package com.sam.hab.txrx;
 
 import com.sam.hab.lora.Constants.*;
-import com.sam.hab.main.IcarusMain;
 
 import java.io.IOException;
 

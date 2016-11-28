@@ -18,7 +18,7 @@ public class CycleManager {
 
     public CycleManager() {
         try {
-            lora = new LoRa(869.850, Bandwidth.BW250, (short)7, CodingRate.CR4_5, true);
+            lora = new LoRa(869.850, Bandwidth.BW250, (short)7, CodingRate.CR4_5, true, this);
         } catch (IOException e) {
             throw new RuntimeException("LoRa module contact not established, check your wiring?");
         }

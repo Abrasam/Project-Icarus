@@ -9,7 +9,6 @@ import com.pi4j.io.spi.SpiFactory;
 
 import com.pi4j.wiringpi.Gpio;
 import com.sam.hab.lora.Constants.*;
-import com.sam.hab.main.IcarusMain;
 import com.sam.hab.txrx.CycleManager;
 
 import java.io.IOException;
@@ -122,7 +121,7 @@ public class LoRa {
     public void onRxDone() {
         try {
             byte[] payload = readPayload();
-            IcarusMain.cycleManager.addToRx(payload);
+            cm.addToRx(payload);
         } catch (IOException e) {
             //Error?
         }
