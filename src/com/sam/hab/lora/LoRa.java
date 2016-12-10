@@ -32,6 +32,7 @@ public class LoRa {
 
     /**
      * Constructor for the LoRa interface class. Parameters are the modem settings for the radio.
+     * This class encapsulates all the advanced LoRa register modification functionality, providing me, as the developer, with a simpler interface elsewhere in the program.
      * @param frequency
      * @param bandwidth
      * @param spreadingFactor
@@ -60,7 +61,7 @@ public class LoRa {
                     try {
                         clearIRQFlags();
                     } catch (IOException e) {
-                        //need to throw error here.
+                        //Error? Need to throw error here.
                     }
                     dio0();
                 }
@@ -122,6 +123,9 @@ public class LoRa {
         try {
             byte[] payload = readPayload();
             cm.addToRx(payload);
+            resetRXPtr();
+            setMode(Mode.RX);
+            System.out.println(getMode());
         } catch (IOException e) {
             //Error?
         }
@@ -279,7 +283,7 @@ public class LoRa {
         byte nbBytes = readRegister(Register.RXNBBYTES, 1)[1];
         byte fifoRxCurrentAddr = readRegister(Register.FIFORXCURRENTADDR, 1)[1];
         setFifoPointer(fifoRxCurrentAddr);
-        byte[] payload = Arrays.copyOfRange(readRegister(Register.FIFO, nbBytes), 1, nbBytes);
+        byte[] payload = Arrays.copyOfRange(readRegister(Register.FIFO, nbBytes), 1, nbBytes+1);
         return payload;
     }
 
@@ -324,9 +328,11 @@ public class LoRa {
      * @throws IOException
      * @throws InterruptedException
      */
-    public void resetRXPtr() throws IOException, InterruptedException {
+    public void resetRXPtr() throws IOException {
+        setMode(Mode.SLEEP);
         byte baseAddr = readRegister(Register.FIFORXBASEADDR, 1)[1];
         setFifoPointer(baseAddr);
+        //setMode(Mode.STDBY);
     }
 
     /**

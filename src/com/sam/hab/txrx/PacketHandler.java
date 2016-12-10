@@ -2,7 +2,13 @@ package com.sam.hab.txrx;
 
 import com.sam.hab.lora.Constants.*;
 
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
+import java.util.Calendar;
 
 public class PacketHandler implements Runnable {
 
@@ -14,34 +20,65 @@ public class PacketHandler implements Runnable {
 
     @Override
     public void run() {
-        String packet = cm.getNextReceived();
-        if (packet != null) {
-            if (packet.charAt(0) == '>') {
-                ReceivedPacket pckt = PacketParser.parseTwoWay(packet, "a key must go here");
-                switch (pckt.type) {
-                    case CMD:
-                        if (pckt.data.equals("TRA")) {
-                            try {
-                                cm.switchMode(Mode.TX);
-                            } catch (IOException e) {
-                                //Error?
+        Calendar cal = Calendar.getInstance();
+        while (true) {
+            String packet = cm.getNextReceived();
+            if (packet != null) {
+                if (packet.charAt(0) == '>') {
+                    ReceivedPacket pckt = PacketParser.parseTwoWay(packet, "a key must go here");
+                    switch (pckt.type) {
+                        case CMD:
+                            if (pckt.data.equals("TRA")) {
+                                try {
+                                    cm.switchMode(Mode.TX);
+                                } catch (IOException e) {
+                                    //Error?
+                                }
                             }
-                        }
-                    case SHELL:
-                        //Do shell.
-                    break;
-                    case DIAG:
-                        //Do diagnostic.
-                        break;
-                    case NACK:
-                        //Do NACK.
-                        break;
-                    case OTHER:
-                        //Not really sure what to do here either?
+                        case SHELL:
+                            //Do shell.
+                            break;
+                        case DIAG:
+                            //Do diagnostic.
+                            break;
+                        case NACK:
+                            //Do NACK.
+                            break;
+                        case OTHER:
+                            //Not really sure what to do here either?
+                    }
+                } else if (packet.charAt(0) == '$') {
+                    ReceivedTelemetry telem = PacketParser.parseTelemetry(packet);
+
+                    if (telem != null) {
+
+                        cm.gui.getAlt().setText(String.valueOf(telem.alt));
+                        cm.gui.getLat().setText(String.valueOf(telem.lat));
+                        cm.gui.getLon().setText(String.valueOf(telem.lon));
+                        cm.gui.getLastpckt().setText(cal.getTime().toString());
+
+                        //Logic to log the packet goes here.
+
+                        //Logic to upload to server goes here.
+                    }
+                } else {
+                    PacketParser.parseSSDV(packet);
+                    BufferedImage pic = null;
+                    try {
+                        pic = ImageIO.read(new File("current.jpeg"));
+                    } catch (IOException e) {
+                        //Error?
+                    }
+
+                    Image resized = pic.getScaledInstance(640, 480, 0);
+
+                    cm.gui.getImg().setIcon(new ImageIcon(resized));
                 }
-            } else if (packet.charAt(0) == '$') {
-                ReceivedTelemetry telem = PacketParser.parseTelemetry(packet);
-                //Logic to upload to server goes here.
+            }
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                //Error?
             }
         }
     }

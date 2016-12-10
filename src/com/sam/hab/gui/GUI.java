@@ -1,48 +1,90 @@
 package com.sam.hab.gui;
 
-import javafx.application.Application;
-import javafx.embed.swt.FXCanvas;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
-import javafx.scene.control.SplitPane;
-import javafx.scene.text.Text;
-import javafx.stage.Stage;
+import javax.swing.*;
+import javax.swing.text.DefaultCaret;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Map;
+public class GUI {
+    private JTabbedPane tabbedPane1;
+    private JTextArea rxcon;
+    private JTextArea txcon;
+    private JTextField lat;
+    private JTextField lon;
+    private JTextField alt;
+    private JTextField lastpckt;
+    private JTextField recvrs;
+    private JTextField velv;
+    private JTextField velh;
+    private JLabel img;
+    private JPanel ssdvPanel;
+    private JPanel panelMain;
+    private JTextArea consoleOutput;
+    private JTextField consoleInput;
 
-public class GUI extends Application {
-
-    public static void start() {
-        launch();
+    public void init() {
+        rxcon.setLineWrap(true);
+        txcon.setLineWrap(true);
+        ((DefaultCaret)rxcon.getCaret()).setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+        ((DefaultCaret)txcon.getCaret()).setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
     }
 
-    Map<String, Object> fxmlNamespace;
-
-    @Override
-    public void start(Stage primaryStage) {
-        FXMLLoader loader = new FXMLLoader(GUI.class.getResource("UI.fxml"));
-
-        SplitPane pane = null;
-        try {
-            pane = loader.load();
-        } catch (IOException e) {
-            System.out.println("ORANGES!");
-            e.printStackTrace();
-        }
-
-        fxmlNamespace = loader.getNamespace();
-        ((Text)fxmlNamespace.get("lat")).setText("51.200000");
-        ((Text)fxmlNamespace.get("lon")).setText("51.200000");
-
-        primaryStage.setScene(new Scene(pane, 1024, 768));
-
-        primaryStage.setTitle("Kittens!");
-        primaryStage.show();
+    public JLabel getImg() {
+        return img;
     }
 
-    public void setTest(String s) {
-        ((Text)fxmlNamespace.get("telemsecs")).setText("51.200000");
+    public JTabbedPane getTabbedPane1() {
+        return tabbedPane1;
+    }
+
+    public JPanel getPanelMain() {
+        return panelMain;
+    }
+
+    public JTextArea getRxcon() {
+        return rxcon;
+    }
+
+    public JTextArea getTxcon() {
+        return txcon;
+    }
+
+    public JTextField getLat() {
+        return lat;
+    }
+
+    public JTextField getLon() {
+        return lon;
+    }
+
+    public JTextField getAlt() {
+        return alt;
+    }
+
+    public JTextField getLastpckt() {
+        return lastpckt;
+    }
+
+    public JTextField getRecvrs() {
+        return recvrs;
+    }
+
+    public JTextField getVelv() {
+        return velv;
+    }
+
+    public JTextField getVelh() {
+        return velh;
+    }
+
+    public JPanel getSsdvPanel() {
+
+        return ssdvPanel;
+    }
+
+    public void writeRx(String write) {
+        rxcon.append(write);
+    }
+
+    public void writeTx(String write) {
+        txcon.append(write);
     }
 }

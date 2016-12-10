@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jnlp spec="1.0" xmlns:jfx="http://javafx.com" href="Project_Icarus.jnlp">
+  <information>
+    <title>Project Icarus</title>
+    <vendor>Unknown</vendor>
+    <description>Project Icarus</description>
+    <offline-allowed/>
+  </information>
+  <resources>
+    <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
+    <jar href="Project_Icarus.jar" size="23322" download="eager" />
+  </resources>
+  <jfx:javafx-desc  width="600" height="400" main-class="com.sam.hab.gui.GUI"  name="Project Icarus" />
+  <update check="background"/>
+</jnlp>

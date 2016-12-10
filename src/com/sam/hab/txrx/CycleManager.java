@@ -1,5 +1,6 @@
 package com.sam.hab.txrx;
 
+import com.sam.hab.gui.GUI;
 import com.sam.hab.lora.Constants.*;
 import com.sam.hab.lora.LoRa;
 
@@ -14,14 +15,18 @@ public class CycleManager {
 
     private LoRa lora;
 
-    private boolean transmitting;
+    protected final GUI gui;
 
-    public CycleManager() {
+    public CycleManager(GUI gui) {
+        this.gui = gui;
         try {
             lora = new LoRa(869.850, Bandwidth.BW250, (short)7, CodingRate.CR4_5, true, this);
         } catch (IOException e) {
-            throw new RuntimeException("LoRa module contact not established, check your wiring?");
+            throw new RuntimeException("LoRa module contact not established, perhaps check your wiring?");
         }
+
+        Thread packetThread = new Thread(new PacketHandler(this));
+        packetThread.start();
     }
 
     public boolean isTxFull() {
@@ -43,7 +48,7 @@ public class CycleManager {
 
     public void switchMode(Mode mode) throws IOException {
         if (mode == Mode.TX) {
-            lora.setMode(Mode.SLEEP);
+            lora.setMode(Mode.STDBY);
             String[] transmit = new String[10];
             for (int i = 0; i < 10; i++) {
                 if (transmitQueue.size() <= 0) {
@@ -52,12 +57,13 @@ public class CycleManager {
                 transmit[i] = transmitQueue.poll();
             }
             lora.send(transmit);
-        } else if (mode == Mode.TX) {
-
+        } else if (mode == Mode.RX) {
+            lora.setMode(Mode.RX);
+            lora.setDIOMapping(DIOMode.RXDONE);
         }
     }
 
     public void addToRx(byte[] payload) {
-        receiveQueue.add(String.valueOf(payload));
+        receiveQueue.add(new String(payload));
     }
 }
