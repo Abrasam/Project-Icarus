@@ -4,6 +4,8 @@ import com.sam.hab.lora.Constants.*;
 import com.sam.hab.util.CRC16CCITT;
 
 import java.io.*;
+import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
 
 public class PacketParser {
 
@@ -33,26 +35,36 @@ public class PacketParser {
         return new ReceivedTelemetry(raw, Float.valueOf(packetList[3]), Float.valueOf(packetList[4]), Float.valueOf(packetList[5]), Float.valueOf(packetList[1]));
     }
 
-    public static void parseSSDV(String raw) {
-        raw = "U" + raw;
-        byte[] bytes = raw.getBytes();
+    public static int[] parseSSDV(byte[] in) {
+        byte[] bytes = new byte[in.length+1];
+        bytes[0] = 0x55;
+        System.arraycopy(in, 0, bytes, 1, in.length);
+        System.out.println(Arrays.toString(bytes));
         int imageNo = bytes[6];
+        System.out.println(imageNo);
         int packetNo = bytes[7] * 256 + bytes[8];
         //TODO: Log here that I've received a packet.
         FileOutputStream fos = null;
         File file = new File("image_" + String.valueOf(imageNo) + ".bin");
         Runtime rt = Runtime.getRuntime();
         try {
-            file.getParentFile().mkdirs();
             file.createNewFile();
-            fos = new FileOutputStream(file);
+            fos = new FileOutputStream(file, true);
             fos.write(bytes);
-            Process pr = rt.exec("ssdv -d image_" + String.valueOf(imageNo) + ".bin current.jpeg");
+            Process pr = rt.exec("./ssdv -d image_" + String.valueOf(imageNo) + ".bin current.jpg");
+            pr.waitFor(1000, TimeUnit.MILLISECONDS);
+            System.out.println(pr.waitFor());
         } catch (FileNotFoundException e) {
+            e.printStackTrace();
             //Error here?
         } catch (IOException e) {
+            e.printStackTrace();
+            //Error here?
+        } catch (InterruptedException e) {
+            //This really shouldn't happen but:
             //Error here?
         }
+        return new int[] {imageNo, packetNo};
     }
 
 }

@@ -5,13 +5,14 @@ import com.sam.hab.lora.Constants.*;
 import com.sam.hab.lora.LoRa;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.LinkedList;
 import java.util.Queue;
 
 public class CycleManager {
 
-    private Queue<String> transmitQueue = new LinkedList<String>();
-    private Queue<String> receiveQueue = new LinkedList<String>();
+    private Queue<byte[]> transmitQueue = new LinkedList<byte[]>();
+    private Queue<byte[]> receiveQueue = new LinkedList<byte[]>();
 
     private LoRa lora;
 
@@ -33,13 +34,13 @@ public class CycleManager {
         return transmitQueue.size() >= 10;
     }
 
-    public void addToTx(String payload) {
+    public void addToTx(byte[] payload) {
         if (!isTxFull()) {
             transmitQueue.add(payload);
         }
     }
 
-    public String getNextReceived() {
+    public byte[] getNextReceived() {
         if (receiveQueue.size() > 0) {
             return receiveQueue.poll();
         }
@@ -54,7 +55,7 @@ public class CycleManager {
                 if (transmitQueue.size() <= 0) {
                     break;
                 }
-                transmit[i] = transmitQueue.poll();
+                transmit[i] = new String(transmitQueue.poll());
             }
             lora.send(transmit);
         } else if (mode == Mode.RX) {
@@ -63,7 +64,7 @@ public class CycleManager {
         }
     }
 
-    public void addToRx(byte[] payload) {
-        receiveQueue.add(new String(payload));
+    public void addToRx(byte[] payload)  {
+        receiveQueue.add(payload);
     }
 }

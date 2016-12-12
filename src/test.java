@@ -12,6 +12,8 @@ import java.io.IOException;
 public class test {
 
     public static void main(String[] args) throws IOException, InterruptedException {
+        byte ten = 10;
+        System.out.println("Hello!" + (char)ten + "oranges!");
         JFrame frame = new JFrame("Prototype 2-Way HAB Comms");
         GUI gui = new GUI();
         gui.init();
@@ -21,7 +23,7 @@ public class test {
         frame.pack();
         frame.setVisible(true);
 
-        frame.setExtendedState(frame.getExtendedState() | JFrame.MAXIMIZED_BOTH);
+        //frame.setExtendedState(frame.getExtendedState() | JFrame.MAXIMIZED_BOTH);
 
         CycleManager cm = new CycleManager(gui);
         cm.switchMode(Mode.RX);

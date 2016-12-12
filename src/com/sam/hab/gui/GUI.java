@@ -2,6 +2,8 @@ package com.sam.hab.gui;
 
 import javax.swing.*;
 import javax.swing.text.DefaultCaret;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class GUI {
     private JTabbedPane tabbedPane1;
@@ -19,6 +21,19 @@ public class GUI {
     private JPanel panelMain;
     private JTextArea consoleOutput;
     private JTextField consoleInput;
+    private JButton rebootButton;
+    private JButton batteryVoltageButton;
+    private JButton internalTempButton;
+    private JTextArea textArea1;
+
+    public GUI() {
+        rebootButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                
+            }
+        });
+    }
 
     public void init() {
         rxcon.setLineWrap(true);

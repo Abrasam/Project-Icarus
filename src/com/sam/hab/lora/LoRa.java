@@ -125,7 +125,6 @@ public class LoRa {
             cm.addToRx(payload);
             resetRXPtr();
             setMode(Mode.RX);
-            System.out.println(getMode());
         } catch (IOException e) {
             //Error?
         }
@@ -153,6 +152,7 @@ public class LoRa {
      * @throws IOException
      */
     private byte[] readRegister(Register reg, int nbBytes) throws IOException {
+        System.out.println(reg.toString());
         byte[] send = new byte[nbBytes + 1];
         send[0] = (byte)reg.addr;
         byte[] out = spi.write(send);
@@ -280,10 +280,11 @@ public class LoRa {
      * @throws IOException
      */
     public byte[] readPayload() throws IOException {
-        byte nbBytes = readRegister(Register.RXNBBYTES, 1)[1];
+        int nbBytes = 0xFF & readRegister(Register.RXNBBYTES, 1)[1];
         byte fifoRxCurrentAddr = readRegister(Register.FIFORXCURRENTADDR, 1)[1];
         setFifoPointer(fifoRxCurrentAddr);
         byte[] payload = Arrays.copyOfRange(readRegister(Register.FIFO, nbBytes), 1, nbBytes+1);
+        System.out.println(payload.length);
         return payload;
     }
 
