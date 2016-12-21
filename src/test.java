@@ -12,8 +12,6 @@ import java.io.IOException;
 public class test {
 
     public static void main(String[] args) throws IOException, InterruptedException {
-        byte ten = 10;
-        System.out.println("Hello!" + (char)ten + "oranges!");
         JFrame frame = new JFrame("Prototype 2-Way HAB Comms");
         GUI gui = new GUI();
         gui.init();

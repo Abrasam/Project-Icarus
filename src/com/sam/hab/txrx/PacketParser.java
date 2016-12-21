@@ -40,9 +40,9 @@ public class PacketParser {
         bytes[0] = 0x55;
         System.arraycopy(in, 0, bytes, 1, in.length);
         System.out.println(Arrays.toString(bytes));
-        int imageNo = bytes[6];
+        int imageNo = (0xFF & bytes[6]);
         System.out.println(imageNo);
-        int packetNo = bytes[7] * 256 + bytes[8];
+        int packetNo = (0xFF & bytes[7]) * 256 + (0xFF & bytes[8]);
         //TODO: Log here that I've received a packet.
         FileOutputStream fos = null;
         File file = new File("image_" + String.valueOf(imageNo) + ".bin");
