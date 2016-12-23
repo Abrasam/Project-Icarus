@@ -1,12 +1,4 @@
-import com.sam.hab.payload.main.Config;
-import com.sam.hab.payload.serial.GPSLoop;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import com.sam.hab.util.lora.Config;
 
 public class Test {
 

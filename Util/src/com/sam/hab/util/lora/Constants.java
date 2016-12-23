@@ -1,7 +1,7 @@
 package com.sam.hab.util.lora;
 
 /**
- * A utility class to store all me copnstants!
+ * A utility class to store all me constants! These are used for the LoRa radio operation, as it uses an SPI interface most data is sent in the form of a few bytes.
  */
 public class Constants {
 
@@ -103,6 +103,31 @@ public class Constants {
             return null;
         }
 
+        public static String asString(Bandwidth bandwidth) {
+            switch (bandwidth) {
+                case BW7_8:
+                    return "7K8";
+                case BW10_4:
+                    return "10K4";
+                case BW15_6:
+                    return "15K6";
+                case BW20_8:
+                    return "20K8";
+                case BW31_25:
+                    return "21K25";
+                case BW41_7:
+                    return "41K7";
+                case BW62_5:
+                    return "62K5";
+                case BW125:
+                    return "125K";
+                case BW250:
+                    return "250K";
+                case BW500:
+                    return "500K";
+            }
+            return null;
+        }
     }
 
     public enum CodingRate {

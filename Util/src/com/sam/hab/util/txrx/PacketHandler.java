@@ -25,7 +25,7 @@ public class PacketHandler implements Runnable {
             if (bytes != null) {
                 String packet = new String(bytes);
                 if (packet.charAt(0) == '>') {
-                    ReceivedPacket pckt = PacketParser.parseTwoWay(packet, "a key must go here");
+                    ReceivedPacket pckt = PacketParser.parseTwoWay(packet, cm.key);
 
                     cm.handle2Way(pckt);
 
@@ -56,7 +56,7 @@ public class PacketHandler implements Runnable {
                 }
             }
             try {
-                Thread.sleep(100);
+                Thread.sleep(10);
             } catch (InterruptedException e) {
                 //Error?
             }

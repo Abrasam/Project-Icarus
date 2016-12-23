@@ -2,13 +2,12 @@ package com.sam.hab.payload.main;
 
 import com.sam.hab.payload.serial.GPSLoop;
 import com.sam.hab.util.csum.CRC16CCITT;
+import com.sam.hab.util.lora.Config;
 import com.sam.hab.util.txrx.CycleManager;
 import com.sam.hab.util.txrx.ReceivedPacket;
 import com.sam.hab.util.txrx.ReceivedTelemetry;
 
 import java.awt.image.BufferedImage;
-import java.util.LinkedList;
-import java.util.Queue;
 
 public class PayloadMain {
 
@@ -32,10 +31,11 @@ public class PayloadMain {
     }
 
     public static void main(String[] args) {
+        Config conf = new Config();
         Thread gpsThread = new Thread(new GPSLoop());
         gpsThread.start();
         ImageManager im = new ImageManager();
-        CycleManager cm = new CycleManager(true) {
+        CycleManager cm = new CycleManager(true, conf.getCallsign(), new double[] {conf.getFreq(), conf.getListen()}, conf.getBandwidth(), conf.getSf(), conf.getCodingRate(), !conf.getImplicit(), conf.getKey()) {
             @Override
             public void handleTelemetry(ReceivedTelemetry telem) {
                 return;

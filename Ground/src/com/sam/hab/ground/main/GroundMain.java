@@ -1,6 +1,7 @@
 package com.sam.hab.ground.main;
 
 import com.sam.hab.ground.gui.GUI;
+import com.sam.hab.util.lora.Config;
 import com.sam.hab.util.lora.Constants.*;
 import com.sam.hab.util.txrx.CycleManager;
 import com.sam.hab.util.txrx.ReceivedPacket;
@@ -28,14 +29,15 @@ public class GroundMain {
 
         //frame.setExtendedState(frame.getExtendedState() | JFrame.MAXIMIZED_BOTH);
 
-        CycleManager cm = new CycleManager(false) {
+        Config conf = new Config();
+
+        CycleManager cm = new CycleManager(false, conf.getCallsign(), new double[] {conf.getFreq(), conf.getListen()}, conf.getBandwidth(), conf.getSf(), conf.getCodingRate(), !conf.getImplicit(), conf.getKey()) {
             @Override
             public void handleTelemetry(ReceivedTelemetry telem) {
                 gui.getAlt().setText(String.valueOf(telem.alt));
                 gui.getLat().setText(String.valueOf(telem.lat));
                 gui.getLon().setText(String.valueOf(telem.lon));
                 gui.getLastpckt().setText(cal.getTime().toString());
-
                 gui.writeRx(telem.raw + "\n");
             }
 

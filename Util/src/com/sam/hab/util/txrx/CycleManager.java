@@ -19,12 +19,20 @@ public abstract class CycleManager {
 
     private final boolean payload;
 
-    private LoRa lora;
+    private final LoRa lora;
 
-    public CycleManager(boolean payload) {
+    private final double[] freq;
+
+    protected final String callSign;
+    protected final String key;
+
+    public CycleManager(boolean payload, String callSign, double[] frequency, Bandwidth bandwidth, short sf, CodingRate codingRate, boolean explicit, String key) { //frequency array, the 0 index is for transmit, the 1 index is for receive.
         this.payload = payload;
+        this.freq = frequency;
+        this.callSign = callSign;
+        this.key = key;
         try {
-            lora = new LoRa(869.850, Bandwidth.BW250, (short) 7, CodingRate.CR4_5, true, this);
+            lora = new LoRa(freq[0], bandwidth, sf, codingRate, explicit, this);
         } catch (IOException e) {
             throw new RuntimeException("LoRa module contact not established, check your wiring perhaps?");
         }
@@ -51,10 +59,11 @@ public abstract class CycleManager {
     public void switchMode(Mode mode) throws IOException {
         if (mode == Mode.TX) {
             lora.setMode(Mode.STDBY);
+            lora.setFrequency(freq[0]);
             String[] transmit = new String[(payload ? 90 : 10)];
             for (int i = 0; i < 10; i ++) {
                 if (transmitQueue.size() <= 0) {
-                    transmit[i] = ">>" + "CALLSIGN" + "," + String.valueOf(i) + ",5,NULL*" + CRC16CCITT.calcCsum((">>" + "CALLSIGN" + "," + String.valueOf(i) + ",5,NULL").getBytes()) + "\n";
+                    transmit[i] = ">>" + callSign + "," + String.valueOf(i) + ",5,NULL*" + CRC16CCITT.calcCsum((">>" + callSign + "," + String.valueOf(i) + ",5,NULL").getBytes()) + "\n";
                 }
                 transmit[i] = String.format(new String(transmitQueue.poll()), String.valueOf(i));
                 transmitted[i] = transmit[i];
@@ -69,6 +78,8 @@ public abstract class CycleManager {
             }
             lora.send(transmit);
         } else if (mode == Mode.RX) {
+            lora.setMode(Mode.STDBY);
+            lora.setFrequency(freq[1]);
             lora.setMode(Mode.RX);
             lora.setDIOMapping(DIOMode.RXDONE);
         }

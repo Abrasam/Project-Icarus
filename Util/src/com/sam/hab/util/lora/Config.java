@@ -1,10 +1,11 @@
-package com.sam.hab.payload.main;
+package com.sam.hab.util.lora;
 
 import com.sam.hab.util.lora.Constants.*;
 import com.sun.corba.se.impl.io.TypeMismatchException;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.*;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -12,8 +13,9 @@ public class Config {
 
     private String callsign;
     private double freq;
+    private double listen;
     private Bandwidth bandwidth;
-    private int sf;
+    private short sf;
     private CodingRate codingRate;
     private String key;
     private boolean implicit;
@@ -26,7 +28,7 @@ public class Config {
             if (!f.exists()) {
                 f.createNewFile();
                 FileWriter writer = new FileWriter(f);
-                writer.write("callsign: TEST00\nkey: notakey\nfreq: 869.850\nbw: 250K\nsf: 7\ncoding: 5\nimplicit: false\npower: 5");
+                writer.write("callsign: TEST00\nkey: key123456\nfreq: 869.850\nlisten: 869.525\nbw: 250K\nsf: 7\ncoding: 5\nimplicit: false\npower: 5");
                 writer.close();
             }
             BufferedReader reader = new BufferedReader(new FileReader(f));
@@ -40,11 +42,37 @@ public class Config {
             Map<Object, Object> conf = (Map<Object, Object>)yaml.load(s);
             callsign = (String) conf.get("callsign");
             freq = (double) conf.get("freq");
+            listen = (double)conf.get("listen");
             bandwidth = Bandwidth.getBandwidth((String) conf.get("bw"));
-            sf = (int) conf.get("sf");
+            sf = (short) conf.get("sf");
             codingRate = CodingRate.valueOf("CR4_" + String.valueOf(conf.get("coding")));
             implicit = (boolean) conf.get("implicit");
             power = (int)conf.get("power");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void save() {
+        Yaml yaml = new Yaml();
+        Map<Object, Object> conf = new HashMap<Object, Object>();
+        conf.put("freq", freq);
+        conf.put("listen", listen);
+        conf.put("bandwidth", Bandwidth.asString(bandwidth));
+        conf.put("sf", sf);
+        conf.put("codingRate", codingRate.toString().replace("CR4_", ""));
+        conf.put("implicit", implicit);
+        conf.put("power", power);
+        String data = yaml.dump(conf);
+        File f = new File("config.yml");
+        if (f.exists()) {
+            f.delete();
+        }
+        try {
+            f.createNewFile();
+            FileWriter writer = new FileWriter(f);
+            writer.write(data);
+            writer.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -62,7 +90,7 @@ public class Config {
         return bandwidth;
     }
 
-    public int getSf() {
+    public short getSf() {
         return sf;
     }
 
@@ -80,5 +108,13 @@ public class Config {
 
     public int getPower() {
         return power;
+    }
+
+    public double getListen() {
+        return listen;
+    }
+
+    public boolean getImplicit() {
+        return implicit;
     }
 }
