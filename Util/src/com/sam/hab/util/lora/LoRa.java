@@ -48,10 +48,10 @@ public class LoRa {
 
         this.cm = cm;
 
-        spi = SpiFactory.getInstance(SpiChannel.CS0, SpiDevice.DEFAULT_SPI_SPEED, SpiDevice.DEFAULT_SPI_MODE);
+        spi = SpiFactory.getInstance(SpiChannel.CS1, SpiDevice.DEFAULT_SPI_SPEED, SpiDevice.DEFAULT_SPI_MODE);
         gpio = GpioFactory.getInstance();
 
-        dio0 = gpio.provisionDigitalInputPin(RaspiPin.GPIO_00, PinPullResistance.PULL_DOWN);
+        dio0 = gpio.provisionDigitalInputPin(RaspiPin.GPIO_27, PinPullResistance.PULL_DOWN);
 
         dio0.setShutdownOptions(true);
         dio0.addListener(new GpioPinListenerDigital() {
@@ -185,8 +185,8 @@ public class LoRa {
         writeRegister(Register.OPMODE, mode.val);
         if (this.mode != Mode.SLEEP) {
             long time = System.currentTimeMillis();
-            while (Gpio.digitalRead(2) != 1) {
-                System.out.println(Gpio.digitalRead(2));
+            while (Gpio.digitalRead(26) != 1) {
+                System.out.println(Gpio.digitalRead(26));
                 try {
                     Thread.sleep(10);
                 } catch (InterruptedException e) {

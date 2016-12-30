@@ -44,7 +44,7 @@ public class Config {
             freq = (double) conf.get("freq");
             listen = (double)conf.get("listen");
             bandwidth = Bandwidth.getBandwidth((String) conf.get("bw"));
-            sf = (short) conf.get("sf");
+            sf = (short) (int) conf.get("sf");
             codingRate = CodingRate.valueOf("CR4_" + String.valueOf(conf.get("coding")));
             implicit = (boolean) conf.get("implicit");
             power = (int)conf.get("power");

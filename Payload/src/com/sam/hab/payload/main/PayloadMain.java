@@ -30,7 +30,7 @@ public class PayloadMain {
         }
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         Config conf = new Config();
         Thread gpsThread = new Thread(new GPSLoop());
         gpsThread.start();
@@ -61,5 +61,8 @@ public class PayloadMain {
                 return new String(im.getImagePacket());
             }
         };
+        while (true) {
+            Thread.sleep(1000);
+        }
     }
 }
