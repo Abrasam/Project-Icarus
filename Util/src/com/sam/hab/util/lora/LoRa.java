@@ -12,6 +12,7 @@ import com.sam.hab.util.lora.Constants.*;
 import com.sam.hab.util.txrx.CycleManager;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 public class LoRa {
@@ -24,7 +25,6 @@ public class LoRa {
     private Mode mode;
     private SpiDevice spi = null;
     public final GpioController gpio;
-    private final GpioPinDigitalInput dio0;
     private final CycleManager cm;
     private DIOMode dioMapping = DIOMode.RXDONE;
     private int transmitPtr;
@@ -51,23 +51,6 @@ public class LoRa {
         spi = SpiFactory.getInstance(SpiChannel.CS1, SpiDevice.DEFAULT_SPI_SPEED, SpiDevice.DEFAULT_SPI_MODE);
         gpio = GpioFactory.getInstance();
 
-        dio0 = gpio.provisionDigitalInputPin(RaspiPin.GPIO_27, PinPullResistance.PULL_DOWN);
-
-        dio0.setShutdownOptions(true);
-        dio0.addListener(new GpioPinListenerDigital() {
-            @Override
-            public void handleGpioPinDigitalStateChangeEvent(GpioPinDigitalStateChangeEvent event) {
-                if (event.getEdge() == PinEdge.RISING) {
-                    try {
-                        clearIRQFlags();
-                    } catch (IOException e) {
-                        //Error? Need to throw error here.
-                    }
-                    dio0();
-                }
-            }
-        });
-
         setMode(Mode.SLEEP);
 
         setDIOMapping(DIOMode.RXDONE);
@@ -76,44 +59,6 @@ public class LoRa {
         setModemConfig(bandwidth, spreadingFactor, codingRate, explicitHeader);
         setPAConfig((short)5);
         clearIRQFlags();
-    }
-
-    /**
-     * Called when DIO0 pin goes HIGH.
-     */
-    private void dio0() {
-        if (this.dioMapping == DIOMode.TXDONE) {
-            onTxDone();
-        } else if (this.dioMapping == DIOMode.RXDONE) {
-            onRxDone();
-        }
-    }
-
-    /**
-     * Method called when transmit done.
-     */
-    public void onTxDone() {
-        transmitPtr++;
-        if (transmitPtr > transmit.length - 1 || transmit[transmitPtr] == null) {
-            try {
-                cm.switchMode(Mode.RX);
-            } catch (IOException e) {
-                //Error here?
-            }
-            try {
-                setMode(Mode.SLEEP);
-            } catch (IOException e) {
-                //Error here?
-            }
-        } else {
-            try {
-                writePayload(transmit[transmitPtr].getBytes());
-                setMode(Mode.TX);
-            } catch (IOException e) {
-                //Error here?
-            }
-
-        }
     }
 
     /**
@@ -236,6 +181,14 @@ public class LoRa {
      */
     public void writePayload(byte[] payload) throws IOException {
         setMode(Mode.STDBY);
+        String test = new String(payload);
+        if (test.charAt(0) == '$' || test.charAt(0) == '>') {
+            System.out.println(test);
+            System.out.println(test.length());
+        } else {
+            System.out.println(Arrays.toString(payload));
+            System.out.println(payload.length);
+        }
         if (payload.length < 256) {
             setPayloadLength((short)payload.length);
             byte baseAddr = readRegister(Register.FIFOTXBASEADDR, 1)[1];
@@ -343,9 +296,52 @@ public class LoRa {
      */
     public void send(String[] transmitList) throws IOException {
         setDIOMapping(DIOMode.TXDONE);
-        writePayload(transmitList[0].getBytes());
-        this.transmitPtr = 1;
-        this.transmit = transmitList;
-        setMode(Mode.TX);
+        //writePayload(transmitList[0].getBytes());
+        int transmitPtr = 0;
+        while (transmitPtr < transmitList.length) {
+            System.out.println("PTR: " + transmitPtr);
+            writePayload(transmitList[transmitPtr].getBytes(StandardCharsets.US_ASCII));
+            transmitPtr++;
+            setMode(Mode.TX);
+            long time = System.currentTimeMillis();
+            while (Gpio.digitalRead(27) != 1) {
+                System.out.println(Gpio.digitalRead(27));
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException e) {
+                }
+                if (System.currentTimeMillis() - time > 500) {
+                    break;
+                }
+            }
+            clearIRQFlags();
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+    public void receive(int limit, long timeoutMillis) throws IOException {
+        setDIOMapping(DIOMode.RXDONE);
+        int received = 0;
+        long timeout = System.currentTimeMillis() + timeoutMillis;
+        while (received < limit && (System.currentTimeMillis() < timeout || timeoutMillis < 0)) {
+            long time = System.currentTimeMillis();
+            while (Gpio.digitalRead(27) != 1 && (System.currentTimeMillis() < timeout || timeoutMillis < 0)) {
+                System.out.println(Gpio.digitalRead(27));
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException e) {
+                }
+                //if (System.currentTimeMillis() - time > 500) {
+                //    break;
+                //}
+            }
+            clearIRQFlags();
+            onRxDone();
+        }
     }
 }

@@ -21,44 +21,48 @@ public class PacketHandler implements Runnable {
     public void run() {
         Calendar cal = Calendar.getInstance();
         while (true) {
-            byte[] bytes = cm.getNextReceived();
-            if (bytes != null) {
-                String packet = new String(bytes);
-                if (packet.charAt(0) == '>') {
-                    ReceivedPacket pckt = PacketParser.parseTwoWay(packet, cm.key);
+            try {
+                byte[] bytes = cm.getNextReceived();
+                if (bytes != null) {
+                    String packet = new String(bytes);
+                    if (packet.charAt(0) == '>') {
+                        ReceivedPacket pckt = PacketParser.parseTwoWay(packet, cm.key);
 
-                    cm.handle2Way(pckt);
+                        cm.handle2Way(pckt);
 
-                    //Logic to upload and log goes here.
+                        //Logic to upload and log goes here.
 
-                } else if (packet.charAt(0) == '$') {
-                    ReceivedTelemetry telem = PacketParser.parseTelemetry(packet);
+                    } else if (packet.charAt(0) == '$') {
+                        ReceivedTelemetry telem = PacketParser.parseTelemetry(packet);
 
-                    if (telem != null) {
+                        if (telem != null) {
 
-                        cm.handleTelemetry(telem);
+                            cm.handleTelemetry(telem);
 
-                        //Logic to upload to server goes here.
-                    }
-                } else {
-                    int[] res = PacketParser.parseSSDV(bytes);
-                    BufferedImage pic = null;
-                    try {
-                        pic = ImageIO.read(new FileInputStream(new File("current.jpg")));
-                        cm.handleImage(pic, res[0], res[1]);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        //Error?
-                    } catch (NullPointerException e) {
-                        e.printStackTrace();
-                        //Error?
+                            //Logic to upload to server goes here.
+                        }
+                    } else {
+                        int[] res = PacketParser.parseSSDV(bytes);
+                        BufferedImage pic = null;
+                        try {
+                            pic = ImageIO.read(new FileInputStream(new File("current.jpg")));
+                            cm.handleImage(pic, res[0], res[1]);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            //Error?
+                        } catch (NullPointerException e) {
+                            e.printStackTrace();
+                            //Error?
+                        }
                     }
                 }
-            }
-            try {
-                Thread.sleep(10);
-            } catch (InterruptedException e) {
-                //Error?
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException e) {
+                    //Error?
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }

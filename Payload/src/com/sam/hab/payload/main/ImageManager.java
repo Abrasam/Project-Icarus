@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -12,6 +13,9 @@ public class ImageManager {
 
     private Queue<byte[]> imageQueue = new LinkedList<byte[]>();
 
+    private String latestImage = "";
+    private boolean fullDownload = false;
+
     public ImageManager() {
         new Thread(new Runnable() {
             @Override
@@ -19,14 +23,19 @@ public class ImageManager {
                 Calendar cal = Calendar.getInstance();
                 int count = 0;
                 Runtime rt = Runtime.getRuntime();
-
                 try {
                     rt.exec("mkdir images").waitFor();
                     while (true) {
-                        String name = String.valueOf(System.currentTimeMillis() / 1000) + ".jpg";
-                        rt.exec("raspistill -o images/" + name).wait();
-                        rt.exec("convert -resize 768x576\\! images/" + name + " tmp.jpg").waitFor();
-                        rt.exec("./ssdv -e -c " + "CALLSIGN" + " -i " + String.valueOf(count) + " " + name + " out.bin");
+                        if (fullDownload) {
+                            rt.exec("./ssdv -e -c " + "CALLSIGN" + " -i " + String.valueOf(count) + " " + latestImage + " out.bin");
+                        } else {
+                            String name = String.valueOf(System.currentTimeMillis() / 1000) + ".jpg";
+                            rt.exec("raspistill -o images/" + name).waitFor();
+                            rt.exec("convert -resize 768x576\\! images/" + name + " tmp.jpg").waitFor();
+                            rt.exec("./ssdv -e -c " + "CALLSIGN" + " -i " + String.valueOf(count) + " " + name + " out.bin").waitFor();
+                            latestImage = name;
+                        }
+                        count++;
                         Thread.sleep(30000);
                     }
                 } catch (IOException e) {
@@ -36,6 +45,10 @@ public class ImageManager {
                 }
             }
         }).start();
+    }
+
+    public void fullDownload() {
+        this.fullDownload = true;
     }
 
     public byte[] getImagePacket() {
@@ -55,7 +68,10 @@ public class ImageManager {
             }
 
         }
-        return imageQueue.poll();
+        byte[] packet = imageQueue.poll();
+        System.out.println(Arrays.toString(packet));
+        System.out.println("PCKTLEN:" + packet.length);
+        return packet;
     }
 
 }

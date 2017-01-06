@@ -6,10 +6,7 @@ import com.sam.hab.util.lora.LoRa;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 
 public abstract class CycleManager {
 
@@ -19,7 +16,7 @@ public abstract class CycleManager {
 
     private final boolean payload;
 
-    private final LoRa lora;
+    public final LoRa lora; //WON'T STAY PUBLIC!
 
     private final double[] freq;
 
@@ -39,10 +36,14 @@ public abstract class CycleManager {
 
         Thread packetThread = new Thread(new PacketHandler(this));
         packetThread.start();
-    }
 
-    public boolean isTxFull() {
-        return transmitQueue.size() >= 10;
+        if (payload) { //Payloads should start by transmitting.
+            try {
+                switchMode(Mode.TX);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void addToTx(byte[] payload) {
@@ -57,6 +58,9 @@ public abstract class CycleManager {
     }
 
     public void switchMode(Mode mode) throws IOException {
+        if (lora.getMode() == mode) {
+            return; //Prevent unnecessary changes and potential massive errors...
+        }
         if (mode == Mode.TX) {
             lora.setMode(Mode.STDBY);
             lora.setFrequency(freq[0]);
@@ -64,9 +68,10 @@ public abstract class CycleManager {
             for (int i = 0; i < 10; i ++) {
                 if (transmitQueue.size() <= 0) {
                     transmit[i] = ">>" + callSign + "," + String.valueOf(i) + ",5,NULL*" + CRC16CCITT.calcCsum((">>" + callSign + "," + String.valueOf(i) + ",5,NULL").getBytes()) + "\n";
+                } else {
+                    transmit[i] = String.format(new String(transmitQueue.poll()), String.valueOf(i));
+                    transmitted[i] = transmit[i];
                 }
-                transmit[i] = String.format(new String(transmitQueue.poll()), String.valueOf(i));
-                transmitted[i] = transmit[i];
             }
             if (payload) {
                 for (int i = 10; i < 20; i ++) {
@@ -77,11 +82,14 @@ public abstract class CycleManager {
                 }
             }
             lora.send(transmit);
+            switchMode(Mode.RX);
         } else if (mode == Mode.RX) {
             lora.setMode(Mode.STDBY);
             lora.setFrequency(freq[1]);
             lora.setMode(Mode.RX);
             lora.setDIOMapping(DIOMode.RXDONE);
+            lora.receive((payload ? 10 : 90), (payload ? 10000 : - 1));
+            switchMode(Mode.TX);
         }
     }
 

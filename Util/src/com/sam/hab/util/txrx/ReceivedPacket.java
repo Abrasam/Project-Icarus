@@ -15,12 +15,4 @@ public class ReceivedPacket {
         this.id = id;
         this.type = type;
     }
-
-    public void handle() {
-        switch (this.type) {
-            case CMD:
-
-                break;
-        }
-    }
 }

@@ -2,6 +2,7 @@ package com.sam.hab.util.txrx;
 
 import com.sam.hab.util.lora.Constants.*;
 import com.sam.hab.util.csum.CRC16CCITT;
+import sun.misc.CRC16;
 
 import java.io.*;
 import java.util.Arrays;
@@ -10,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 public class PacketParser {
 
     public static ReceivedPacket parseTwoWay(String raw, String key) {
+        System.out.println(raw);
         String cSum = raw.split("\\*")[1];
         String packet = raw.split("\\*")[0];
         packet = packet.replace(">", "");
@@ -25,10 +27,14 @@ public class PacketParser {
     }
 
     public static ReceivedTelemetry parseTelemetry(String raw) {
+        System.out.println(raw);
         String cSum = raw.split("\\*")[1].replace("\n", "");
+        System.out.println(cSum);
         String packet = raw.split("\\*")[0];
-        packet = packet.replace("$", "");
+        System.out.println(packet);
+        System.out.println(CRC16CCITT.calcCsum(packet.getBytes()));
         if (!CRC16CCITT.calcCsum((packet).getBytes()).equals(cSum)) {
+            System.out.println("Wibble!");
             return null;
         }
         String packetList[] = packet.split(",");
@@ -39,9 +45,7 @@ public class PacketParser {
         byte[] bytes = new byte[in.length+1];
         bytes[0] = 0x55;
         System.arraycopy(in, 0, bytes, 1, in.length);
-        System.out.println(Arrays.toString(bytes));
         int imageNo = (0xFF & bytes[6]);
-        System.out.println(imageNo);
         int packetNo = (0xFF & bytes[7]) * 256 + (0xFF & bytes[8]);
         //TODO: Log here that I've received a packet.
         FileOutputStream fos = null;
@@ -51,9 +55,9 @@ public class PacketParser {
             file.createNewFile();
             fos = new FileOutputStream(file, true);
             fos.write(bytes);
+            fos.close();
             Process pr = rt.exec("./ssdv -d image_" + String.valueOf(imageNo) + ".bin current.jpg");
             pr.waitFor(1000, TimeUnit.MILLISECONDS);
-            System.out.println(pr.waitFor());
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             //Error here?

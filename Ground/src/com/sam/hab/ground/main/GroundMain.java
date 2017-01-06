@@ -34,6 +34,9 @@ public class GroundMain {
         CycleManager cm = new CycleManager(false, conf.getCallsign(), new double[] {conf.getFreq(), conf.getListen()}, conf.getBandwidth(), conf.getSf(), conf.getCodingRate(), !conf.getImplicit(), conf.getKey()) {
             @Override
             public void handleTelemetry(ReceivedTelemetry telem) {
+                if (telem == null) {
+                    return;
+                }
                 gui.getAlt().setText(String.valueOf(telem.alt));
                 gui.getLat().setText(String.valueOf(telem.lat));
                 gui.getLon().setText(String.valueOf(telem.lon));
@@ -50,6 +53,10 @@ public class GroundMain {
 
             @Override
             public void handle2Way(ReceivedPacket packet) {
+                if (packet == null) {
+                    return;
+                    //TODO: LOGIC HERE FOR NACK PERHAPS!
+                }
                 switch (packet.type) {
                     case CMD:
                         if (packet.data.equals("TRA")) {
