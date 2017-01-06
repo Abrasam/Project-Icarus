@@ -10,13 +10,17 @@ import java.util.*;
 
 public abstract class CycleManager {
 
+    /*
+     * This class manages the switching between transmission and receiving modes of the radio and manages the handling of all received packets and the preparation for sending for all packets.
+     */
+
     private Queue<byte[]> transmitQueue = new LinkedList<byte[]>();
     private Queue<byte[]> receiveQueue = new LinkedList<byte[]>();
     private String[] transmitted = new String[10];
 
     private final boolean payload;
 
-    public final LoRa lora; //WON'T STAY PUBLIC!
+    private final LoRa lora; //WON'T STAY PUBLIC!
 
     private final double[] freq;
 

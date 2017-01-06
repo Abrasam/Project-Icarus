@@ -163,11 +163,6 @@ public class PayloadMain {
         };
         while (true) {
             Thread.sleep(1000);
-            try {
-                System.out.println(cm.lora.getMode());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         }
     }
 }

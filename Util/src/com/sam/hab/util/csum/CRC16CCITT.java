@@ -6,7 +6,7 @@ public class CRC16CCITT {
 
     public static String calcCsum(byte[] val) {
         int crc = 0xFFFF;
-        int poly = 0x1021; //Implies polynomial 0001 0000 0010 0001 or 0 5 12 in denary.
+        int poly = 0x1021; //Implies polynomial 0001 0000 0010 0001.
 
         for (byte b : val) {
             for (int i = 0; i < 8; i++) {
