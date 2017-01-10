@@ -7,6 +7,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Calendar;
 
 public class PacketHandler implements Runnable {
@@ -22,9 +23,9 @@ public class PacketHandler implements Runnable {
         Calendar cal = Calendar.getInstance();
         while (true) {
             try {
-                byte[] bytes = cm.getNextReceived();
+                String packet = cm.getNextReceived();
+                byte[] bytes = packet.getBytes(StandardCharsets.ISO_8859_1);
                 if (bytes != null) {
-                    String packet = new String(bytes);
                     if (packet.charAt(0) == '>') {
                         ReceivedPacket pckt = PacketParser.parseTwoWay(packet, cm.key);
 

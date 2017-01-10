@@ -6,6 +6,7 @@ import com.sam.hab.util.lora.LoRa;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public abstract class CycleManager {
@@ -14,8 +15,8 @@ public abstract class CycleManager {
      * This class manages the switching between transmission and receiving modes of the radio and manages the handling of all received packets and the preparation for sending for all packets.
      */
 
-    private Queue<byte[]> transmitQueue = new LinkedList<byte[]>();
-    private Queue<byte[]> receiveQueue = new LinkedList<byte[]>();
+    private Queue<String> transmitQueue = new LinkedList<String>();
+    private Queue<String> receiveQueue = new LinkedList<String>();
     private String[] transmitted = new String[10];
 
     private final boolean payload;
@@ -50,11 +51,11 @@ public abstract class CycleManager {
         }
     }
 
-    public void addToTx(byte[] payload) {
+    public void addToTx(String payload) {
         transmitQueue.add(payload);
     }
 
-    public byte[] getNextReceived() {
+    public String getNextReceived() {
         if (receiveQueue.size() > 0) {
             return receiveQueue.poll();
         }
@@ -73,7 +74,7 @@ public abstract class CycleManager {
                 if (transmitQueue.size() <= 0) {
                     transmit[i] = ">>" + callSign + "," + String.valueOf(i) + ",5,NULL*" + CRC16CCITT.calcCsum((">>" + callSign + "," + String.valueOf(i) + ",5,NULL").getBytes()) + "\n";
                 } else {
-                    transmit[i] = String.format(new String(transmitQueue.poll()), String.valueOf(i));
+                    transmit[i] = String.format(transmitQueue.poll(), String.valueOf(i));
                     transmitted[i] = transmit[i];
                 }
             }
@@ -102,7 +103,7 @@ public abstract class CycleManager {
     }
 
     public void addToRx(byte[] payload) {
-        receiveQueue.add(payload);
+        receiveQueue.add(new String(payload, StandardCharsets.ISO_8859_1));
     }
 
     public abstract void handleTelemetry(ReceivedTelemetry telem);

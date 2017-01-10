@@ -1,6 +1,8 @@
 package com.sam.hab.ground.gui;
 
+import com.sam.hab.util.lora.Config;
 import com.sam.hab.util.txrx.CycleManager;
+import com.sam.hab.util.txrx.TwoWayPacketGenerator;
 
 import javax.swing.*;
 import javax.swing.text.DefaultCaret;
@@ -28,14 +30,15 @@ public class GUI {
     private JButton internalTempButton;
     private JTextArea controlResults;
 
-    private CycleManager cm;
+    private final CycleManager cm;
+    private final Config conf;
 
-    public GUI(/*CycleManager cm*/) {
+    public GUI(CycleManager cm, Config conf) {
         this.cm = cm;
+        this.conf = conf;
         rebootButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("Test!");
             }
         });
     }

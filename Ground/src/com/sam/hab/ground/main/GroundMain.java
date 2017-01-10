@@ -18,9 +18,13 @@ import java.util.Calendar;
 public class GroundMain {
 
     public static void main(String[] args) throws IOException, InterruptedException {
+
+        Config conf = new Config();
+
         Calendar cal = Calendar.getInstance();
+        CycleManager cm = null;
         JFrame frame = new JFrame("Prototype 2-Way HAB Comms");
-        GUI gui = new GUI();
+        GUI gui = new GUI(cm, conf);
         gui.init();
         frame.setPreferredSize(new Dimension(1024, 768));
         frame.setContentPane(gui.getPanelMain());
@@ -28,11 +32,7 @@ public class GroundMain {
         frame.pack();
         frame.setVisible(true);
 
-        //frame.setExtendedState(frame.getExtendedState() | JFrame.MAXIMIZED_BOTH);
-
-        Config conf = new Config();
-
-        CycleManager cm = new CycleManager(false, conf.getCallsign(), new double[] {conf.getFreq(), conf.getListen()}, conf.getBandwidth(), conf.getSf(), conf.getCodingRate(), !conf.getImplicit(), conf.getKey()) {
+        cm = new CycleManager(false, conf.getCallsign(), new double[] {conf.getFreq(), conf.getListen()}, conf.getBandwidth(), conf.getSf(), conf.getCodingRate(), !conf.getImplicit(), conf.getKey()) {
             @Override
             public void handleTelemetry(ReceivedTelemetry telem) {
                 if (telem == null) {
@@ -79,7 +79,7 @@ public class GroundMain {
                         String[] transmitted = getTransmitted();
                         for (String id : Arrays.asList(ids)) {
                             try {
-                                addToTx(transmitted[Integer.parseInt(String.valueOf(id))].getBytes(StandardCharsets.ISO_8859_1));
+                                addToTx(transmitted[Integer.parseInt(String.valueOf(id))]);
                             } catch (NumberFormatException e) {
                                 //Error?
                             } catch (ArrayIndexOutOfBoundsException e) {

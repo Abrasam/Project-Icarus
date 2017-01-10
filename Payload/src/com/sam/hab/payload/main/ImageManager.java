@@ -69,8 +69,6 @@ public class ImageManager {
 
         }
         byte[] packet = imageQueue.poll();
-        System.out.println(Arrays.toString(packet));
-        System.out.println("PCKTLEN:" + packet.length);
         return packet;
     }
 

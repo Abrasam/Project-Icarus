@@ -175,18 +175,11 @@ public class LoRa {
 
     /**
      * Used to write the packet to be sent to the LoRa FIFO.
-     * @param payload Payload to send.
+     * @param str Payload to send. Must be a string encoded with ISO 8859-1.
      */
-    public void writePayload(byte[] payload) throws IOException {
+    public void writePayload(String str) throws IOException {
+        byte[] payload = str.getBytes(StandardCharsets.ISO_8859_1);
         setMode(Mode.STDBY);
-        String test = new String(payload);
-        if (test.charAt(0) == '$' || test.charAt(0) == '>') {
-            System.out.println(test);
-            System.out.println(test.length());
-        } else {
-            System.out.println(Arrays.toString(payload));
-            System.out.println(payload.length);
-        }
         if (payload.length < 256) {
             setPayloadLength((short)payload.length);
             byte baseAddr = readRegister(Register.FIFOTXBASEADDR, 1)[1];
@@ -294,11 +287,9 @@ public class LoRa {
      */
     public void send(String[] transmitList) throws IOException {
         setDIOMapping(DIOMode.TXDONE);
-        //writePayload(transmitList[0].getBytes());
         int transmitPtr = 0;
         while (transmitPtr < transmitList.length) {
-            System.out.println("PTR: " + transmitPtr);
-            writePayload(transmitList[transmitPtr].getBytes(StandardCharsets.ISO_8859_1));
+            writePayload(transmitList[transmitPtr]);
             transmitPtr++;
             setMode(Mode.TX);
             long time = System.currentTimeMillis();

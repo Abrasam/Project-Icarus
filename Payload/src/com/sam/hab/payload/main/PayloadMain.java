@@ -76,7 +76,7 @@ public class PayloadMain {
                                 if (f.exists() && f.isDirectory()) {
                                     imageNo = f.list().length;
                                 }
-                                this.addToTx(TwoWayPacketGenerator.generateStatPacket(conf.getCallsign(), conf.getKey(), "IMGNO", String.valueOf(imageNo)).getBytes());
+                                this.addToTx(TwoWayPacketGenerator.generateStatPacket(conf.getCallsign(), conf.getKey(), "IMGNO", String.valueOf(imageNo)));
                                 break;
                             case "BATV":
                                 //TO BE IMPLEMENTED WITH SOME VOLTMETER.
@@ -85,7 +85,7 @@ public class PayloadMain {
                                 //TO BE IMPLEMENTED WITH SOME SENSOR.
                                 break;
                             case "NOGPS":
-                                this.addToTx(TwoWayPacketGenerator.generateStatPacket(conf.getCallsign(), conf.getKey(), "NOGPS", getTelemetry().split(",")[5]).getBytes());
+                                this.addToTx(TwoWayPacketGenerator.generateStatPacket(conf.getCallsign(), conf.getKey(), "NOGPS", getTelemetry().split(",")[5]));
                                 break;
                             case "IMG":
                                 //TO BE IMPLEMENTED.
@@ -115,7 +115,7 @@ public class PayloadMain {
                                 }
                                 String[] packets = TwoWayPacketGenerator.generateShellPackets(conf.getCallsign(), conf.getKey(), toSend);
                                 for (String pckt : Arrays.asList(packets)) {
-                                    this.addToTx(pckt.getBytes(StandardCharsets.ISO_8859_1));
+                                    this.addToTx(pckt);
                                 }
                             }
                         } catch (IOException e) {
@@ -129,7 +129,7 @@ public class PayloadMain {
                         String[] transmitted = getTransmitted();
                         for (String id : Arrays.asList(ids)) {
                             try {
-                                addToTx(transmitted[Integer.parseInt(String.valueOf(id))].getBytes(StandardCharsets.ISO_8859_1));
+                                addToTx(transmitted[Integer.parseInt(String.valueOf(id))]);
                             } catch (NumberFormatException e) {
                                 //Error?
                             } catch (ArrayIndexOutOfBoundsException e) {
