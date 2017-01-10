@@ -115,7 +115,7 @@ public class PayloadMain {
                                 }
                                 String[] packets = TwoWayPacketGenerator.generateShellPackets(conf.getCallsign(), conf.getKey(), toSend);
                                 for (String pckt : Arrays.asList(packets)) {
-                                    this.addToTx(pckt.getBytes());
+                                    this.addToTx(pckt.getBytes(StandardCharsets.ISO_8859_1));
                                 }
                             }
                         } catch (IOException e) {
@@ -129,7 +129,7 @@ public class PayloadMain {
                         String[] transmitted = getTransmitted();
                         for (String id : Arrays.asList(ids)) {
                             try {
-                                addToTx(transmitted[Integer.parseInt(String.valueOf(id))].getBytes());
+                                addToTx(transmitted[Integer.parseInt(String.valueOf(id))].getBytes(StandardCharsets.ISO_8859_1));
                             } catch (NumberFormatException e) {
                                 //Error?
                             } catch (ArrayIndexOutOfBoundsException e) {
@@ -158,7 +158,7 @@ public class PayloadMain {
             @Override
             public String getImagePacket() {
                 byte[] pckt = im.getImagePacket();
-                return new String(pckt, StandardCharsets.US_ASCII);
+                return new String(pckt, StandardCharsets.ISO_8859_1);
             }
         };
         while (true) {

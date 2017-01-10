@@ -11,6 +11,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Calendar;
 
@@ -78,7 +79,7 @@ public class GroundMain {
                         String[] transmitted = getTransmitted();
                         for (String id : Arrays.asList(ids)) {
                             try {
-                                addToTx(transmitted[Integer.parseInt(String.valueOf(id))].getBytes());
+                                addToTx(transmitted[Integer.parseInt(String.valueOf(id))].getBytes(StandardCharsets.ISO_8859_1));
                             } catch (NumberFormatException e) {
                                 //Error?
                             } catch (ArrayIndexOutOfBoundsException e) {

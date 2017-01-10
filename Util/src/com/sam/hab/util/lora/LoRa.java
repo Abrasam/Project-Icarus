@@ -298,7 +298,7 @@ public class LoRa {
         int transmitPtr = 0;
         while (transmitPtr < transmitList.length) {
             System.out.println("PTR: " + transmitPtr);
-            writePayload(transmitList[transmitPtr].getBytes(StandardCharsets.US_ASCII));
+            writePayload(transmitList[transmitPtr].getBytes(StandardCharsets.ISO_8859_1));
             transmitPtr++;
             setMode(Mode.TX);
             long time = System.currentTimeMillis();
