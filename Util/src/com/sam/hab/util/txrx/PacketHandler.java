@@ -24,8 +24,8 @@ public class PacketHandler implements Runnable {
         while (true) {
             try {
                 String packet = cm.getNextReceived();
-                byte[] bytes = packet.getBytes(StandardCharsets.ISO_8859_1);
-                if (bytes != null) {
+                if (packet != null) {
+                    byte[] bytes = packet.getBytes(StandardCharsets.ISO_8859_1);
                     if (packet.charAt(0) == '>') {
                         ReceivedPacket pckt = PacketParser.parseTwoWay(packet, cm.key);
 
@@ -43,14 +43,12 @@ public class PacketHandler implements Runnable {
                             //Logic to upload to server goes here.
                         }
                     } else {
+                        System.out.println("-1");
                         int[] res = PacketParser.parseSSDV(bytes);
+                        System.out.println("0");
                         BufferedImage pic = null;
                         try {
-                            pic = ImageIO.read(new FileInputStream(new File("current.jpg")));
-                            cm.handleImage(pic, res[0], res[1]);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            //Error?
+                            cm.handleImage(res[0], res[1]);
                         } catch (NullPointerException e) {
                             e.printStackTrace();
                             //Error?

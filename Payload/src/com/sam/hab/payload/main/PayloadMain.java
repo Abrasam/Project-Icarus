@@ -42,7 +42,7 @@ public class PayloadMain {
         callsign = conf.getCallsign();
         Thread gpsThread = new Thread(new GPSLoop());
         gpsThread.start();
-        ImageManager im = new ImageManager();
+        ImageManager im = new ImageManager(conf.getCallsign());
         while (currentTelemetry == null) {
             Thread.sleep(500);
         }
@@ -53,7 +53,7 @@ public class PayloadMain {
             }
 
             @Override
-            public void handleImage(BufferedImage pic, int iID, int pID) {
+            public void handleImage(int iID, int pID) {
                 return;
             }
 

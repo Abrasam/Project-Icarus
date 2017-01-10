@@ -108,11 +108,11 @@ public class GUI {
     }
 
     public void writeRx(String write) {
-        rxcon.append(write);
+        rxcon.append("->: " + write);
     }
 
     public void writeTx(String write) {
-        txcon.append(write);
+        txcon.append("<-:" + write);
     }
 
     public JTextArea getConsoleOutput() {

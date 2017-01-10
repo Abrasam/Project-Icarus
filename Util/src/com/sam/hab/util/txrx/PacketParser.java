@@ -57,7 +57,7 @@ public class PacketParser {
             fos.write(bytes);
             fos.close();
             Process pr = rt.exec("./ssdv -d image_" + String.valueOf(imageNo) + ".bin current.jpg");
-            pr.waitFor(1000, TimeUnit.MILLISECONDS);
+            pr.waitFor();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             //Error here?

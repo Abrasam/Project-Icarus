@@ -16,7 +16,7 @@ public class ImageManager {
     private String latestImage = "";
     private boolean fullDownload = false;
 
-    public ImageManager() {
+    public ImageManager(String callsign) {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -31,8 +31,9 @@ public class ImageManager {
                         } else {
                             String name = String.valueOf(System.currentTimeMillis() / 1000) + ".jpg";
                             rt.exec("raspistill -o images/" + name).waitFor();
-                            rt.exec("convert -resize 768x576\\! images/" + name + " tmp.jpg").waitFor();
-                            rt.exec("./ssdv -e -c " + "CALLSIGN" + " -i " + String.valueOf(count) + " " + name + " out.bin").waitFor();
+                            rt.exec("convert images/" + name + " -resize 768x576! tmp.jpg").waitFor();
+                            rt.exec("./ssdv -e -c " + callsign + " -i " + String.valueOf(count) + " tmp.jpg out.bin").waitFor();
+                            System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ A WIBBLE @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
                             latestImage = name;
                         }
                         count++;

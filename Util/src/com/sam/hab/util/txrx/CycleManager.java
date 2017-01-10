@@ -108,7 +108,7 @@ public abstract class CycleManager {
 
     public abstract void handleTelemetry(ReceivedTelemetry telem);
 
-    public abstract void handleImage(BufferedImage pic, int iID, int pID);
+    public abstract void handleImage(int iID, int pID);
 
     public abstract void handle2Way(ReceivedPacket packet);
 

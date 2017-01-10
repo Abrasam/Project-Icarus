@@ -7,9 +7,12 @@ import com.sam.hab.util.txrx.CycleManager;
 import com.sam.hab.util.txrx.ReceivedPacket;
 import com.sam.hab.util.txrx.ReceivedTelemetry;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -27,10 +30,33 @@ public class GroundMain {
         GUI gui = new GUI(cm, conf);
         gui.init();
         frame.setPreferredSize(new Dimension(1024, 768));
+        frame.setSize(new Dimension(1024,768));
         frame.setContentPane(gui.getPanelMain());
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
+
+        Thread imageThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+                    try {
+                        BufferedImage pic = ImageIO.read(new FileInputStream(new File("current.jpg")));
+                        if (pic != null) {
+                            Image resized = pic.getScaledInstance(512, 384, 0);
+                            gui.getImg().setIcon(new ImageIcon(resized));
+                            System.out.println("########################### KITTENS! ##############################");
+                        }
+                        Thread.sleep(1000);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+        imageThread.start();
 
         cm = new CycleManager(false, conf.getCallsign(), new double[] {conf.getFreq(), conf.getListen()}, conf.getBandwidth(), conf.getSf(), conf.getCodingRate(), !conf.getImplicit(), conf.getKey()) {
             @Override
@@ -42,13 +68,11 @@ public class GroundMain {
                 gui.getLat().setText(String.valueOf(telem.lat));
                 gui.getLon().setText(String.valueOf(telem.lon));
                 gui.getLastpckt().setText(cal.getTime().toString());
-                gui.writeRx(telem.raw + "\n");
+                gui.writeRx(telem.raw);
             }
 
             @Override
-            public void handleImage(BufferedImage pic, int iID, int pID) {
-                Image resized = pic.getScaledInstance(640, 480, 0);
-                gui.getImg().setIcon(new ImageIcon(resized));
+            public void handleImage(int iID, int pID) {
                 gui.writeRx("Image no. " + iID + " packet no. " + pID + " received.\n");
             }
 
