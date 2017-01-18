@@ -37,7 +37,6 @@ public class GPSLoop implements Runnable {
                     received = received + c;
                     if (c == '\n') {
                         PayloadMain.generateTelemetry(received);
-                        //System.out.println(received);
                         this.serial.discardOutput();
                         received = "";
                     }

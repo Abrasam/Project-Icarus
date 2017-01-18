@@ -26,37 +26,41 @@ public class PacketHandler implements Runnable {
                 String packet = cm.getNextReceived();
                 if (packet != null) {
                     byte[] bytes = packet.getBytes(StandardCharsets.ISO_8859_1);
-                    if (packet.charAt(0) == '>') {
-                        ReceivedPacket pckt = PacketParser.parseTwoWay(packet, cm.key);
+                    if (packet.length() > 0) {
+                        if (packet.charAt(0) == '>') {
+                            System.out.println(packet);
 
-                        cm.handle2Way(pckt);
+                            ReceivedPacket pckt = PacketParser.parseTwoWay(packet, cm.key);
 
-                        //Logic to upload and log goes here.
+                            System.out.println(pckt == null);
 
-                    } else if (packet.charAt(0) == '$') {
-                        ReceivedTelemetry telem = PacketParser.parseTelemetry(packet);
+                            cm.handle2Way(pckt);
 
-                        if (telem != null) {
+                            //Logic to upload and log goes here.
 
-                            cm.handleTelemetry(telem);
+                        } else if (packet.charAt(0) == '$') {
+                            ReceivedTelemetry telem = PacketParser.parseTelemetry(packet);
 
-                            //Logic to upload to server goes here.
-                        }
-                    } else {
-                        System.out.println("-1");
-                        int[] res = PacketParser.parseSSDV(bytes);
-                        System.out.println("0");
-                        BufferedImage pic = null;
-                        try {
-                            cm.handleImage(res[0], res[1]);
-                        } catch (NullPointerException e) {
-                            e.printStackTrace();
-                            //Error?
+                            if (telem != null) {
+
+                                cm.handleTelemetry(telem);
+
+                                //Logic to upload to server goes here.
+                            }
+                        } else {
+                            int[] res = PacketParser.parseSSDV(bytes);
+                            BufferedImage pic = null;
+                            try {
+                                cm.handleImage(res[0], res[1]);
+                            } catch (NullPointerException e) {
+                                e.printStackTrace();
+                                //Error?
+                            }
                         }
                     }
                 }
                 try {
-                    Thread.sleep(10);
+                    Thread.sleep(100);
                 } catch (InterruptedException e) {
                     //Error?
                 }

@@ -33,7 +33,6 @@ public class ImageManager {
                             rt.exec("raspistill -o images/" + name).waitFor();
                             rt.exec("convert images/" + name + " -resize 768x576! tmp.jpg").waitFor();
                             rt.exec("./ssdv -e -c " + callsign + " -i " + String.valueOf(count) + " tmp.jpg out.bin").waitFor();
-                            System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ A WIBBLE @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
                             latestImage = name;
                         }
                         count++;

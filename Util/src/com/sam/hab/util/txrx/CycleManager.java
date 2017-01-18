@@ -34,21 +34,13 @@ public abstract class CycleManager {
         this.callSign = callSign;
         this.key = key;
         try {
-            lora = new LoRa(freq[0], bandwidth, sf, codingRate, explicit, this);
+            lora = new LoRa(freq[0], bandwidth, sf, codingRate, explicit);
         } catch (IOException e) {
             throw new RuntimeException("LoRa module contact not established, check your wiring perhaps?");
         }
 
         Thread packetThread = new Thread(new PacketHandler(this));
         packetThread.start();
-
-        if (payload) { //Payloads should start by transmitting.
-            try {
-                switchMode(Mode.TX);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     public void addToTx(String payload) {
@@ -62,19 +54,27 @@ public abstract class CycleManager {
         return null;
     }
 
+    private boolean transmit = false;
+
+    public void txInterrupt() {
+        transmit = true;
+    }
+
+    //TODO: This will eventually stack overflow. So, you know, fix that and all.
     public void switchMode(Mode mode) throws IOException {
-        if (lora.getMode() == mode) {
+        if (mode == Mode.TX && lora.getMode() == mode) {
             return; //Prevent unnecessary changes and potential massive errors...
         }
         if (mode == Mode.TX) {
+            transmit = false;
             lora.setMode(Mode.STDBY);
             lora.setFrequency(freq[0]);
             String[] transmit = new String[(payload ? 90 : 10)];
             for (int i = 0; i < 10; i ++) {
                 if (transmitQueue.size() <= 0) {
-                    transmit[i] = ">>" + callSign + "," + String.valueOf(i) + ",5,NULL*" + CRC16CCITT.calcCsum((">>" + callSign + "," + String.valueOf(i) + ",5,NULL").getBytes()) + "\n";
+                    transmit[i] = doPacket(">>" + callSign + "," + String.valueOf(i) + ",5,NULL", key);
                 } else {
-                    transmit[i] = String.format(transmitQueue.poll(), String.valueOf(i));
+                    transmit[i] = doPacket(String.format(transmitQueue.poll(), String.valueOf(i)), key);
                     transmitted[i] = transmit[i];
                 }
             }
@@ -82,20 +82,49 @@ public abstract class CycleManager {
                 for (int i = 10; i < 20; i ++) {
                     transmit[i] = getTelemetry();
                 }
-                for (int i = 20; i < 90; i ++) {
+                for (int i = 20; i < 89; i ++) {
                     transmit[i] = getImagePacket();
                 }
+                transmit[89] = doPacket(String.format(TwoWayPacketGenerator.generateCommand(callSign, key, "TRA"), String.valueOf(89)), key);
+            }
+            for (String pckt : transmit) {
+                onSend(pckt);
             }
             lora.send(transmit);
             switchMode(Mode.RX);
         } else if (mode == Mode.RX) {
             lora.setMode(Mode.STDBY);
             lora.setFrequency(freq[1]);
-            lora.setMode(Mode.RX);
             lora.setDIOMapping(DIOMode.RXDONE);
-            lora.receive((payload ? 10 : 90), (payload ? 10000 : - 1));
-            switchMode(Mode.TX);
+            lora.setMode(Mode.RX);
+            long timeout = System.currentTimeMillis() + 10000;
+            while (System.currentTimeMillis() < timeout && !transmit) {
+                while (!lora.pollDIO0() && !transmit && System.currentTimeMillis() < timeout) {
+                    try {
+                        Thread.sleep(10);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (lora.pollDIO0()) {
+                    lora.clearIRQFlags();
+                    byte[] payload = lora.handlePacket();
+                    if (payload != null) {
+                        addToRx(payload);
+                        timeout = timeout + 1000;
+                    }
+                }
+            }
+            if (transmit || payload) {
+                switchMode(Mode.TX);
+            } else {
+                switchMode(Mode.RX);
+            }
         }
+    }
+
+    private String doPacket(String packet, String key) {
+        return packet + "*" + CRC16CCITT.calcCsum((packet + key).getBytes()) + "\n";
     }
 
     public String[] getTransmitted() {
@@ -107,6 +136,8 @@ public abstract class CycleManager {
     }
 
     public abstract void handleTelemetry(ReceivedTelemetry telem);
+
+    public abstract void onSend(String sent);
 
     public abstract void handleImage(int iID, int pID);
 

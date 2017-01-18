@@ -11,10 +11,9 @@ import java.util.concurrent.TimeUnit;
 public class PacketParser {
 
     public static ReceivedPacket parseTwoWay(String raw, String key) {
-        System.out.println(raw);
-        String cSum = raw.split("\\*")[1];
+        String cSum = raw.split("\\*")[1].replace("\n", "");
         String packet = raw.split("\\*")[0];
-        packet = packet.replace(">", "");
+        //packet = packet.replace(">", "");
         if (!CRC16CCITT.calcCsum((packet + key).getBytes()).equals(cSum)) {
             return null;
         }
@@ -27,14 +26,9 @@ public class PacketParser {
     }
 
     public static ReceivedTelemetry parseTelemetry(String raw) {
-        System.out.println(raw);
         String cSum = raw.split("\\*")[1].replace("\n", "");
-        System.out.println(cSum);
         String packet = raw.split("\\*")[0];
-        System.out.println(packet);
-        System.out.println(CRC16CCITT.calcCsum(packet.getBytes()));
         if (!CRC16CCITT.calcCsum((packet).getBytes()).equals(cSum)) {
-            System.out.println("Wibble!");
             return null;
         }
         String packetList[] = packet.split(",");

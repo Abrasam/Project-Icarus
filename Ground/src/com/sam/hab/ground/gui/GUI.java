@@ -2,12 +2,16 @@ package com.sam.hab.ground.gui;
 
 import com.sam.hab.util.lora.Config;
 import com.sam.hab.util.txrx.CycleManager;
+import com.sam.hab.util.txrx.ReceivedPacket;
+import com.sam.hab.util.txrx.ReceivedTelemetry;
 import com.sam.hab.util.txrx.TwoWayPacketGenerator;
 
 import javax.swing.*;
 import javax.swing.text.DefaultCaret;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Arrays;
+import java.util.Calendar;
 
 public class GUI {
     private JTabbedPane tabbedPane1;
@@ -30,19 +34,90 @@ public class GUI {
     private JButton internalTempButton;
     private JTextArea controlResults;
 
-    private final CycleManager cm;
-    private final Config conf;
+    public final CycleManager cm;
 
-    public GUI(CycleManager cm, Config conf) {
-        this.cm = cm;
-        this.conf = conf;
+    public GUI(Config conf) {
         rebootButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                cm.addToTx(TwoWayPacketGenerator.generateCommand(conf.getCallsign(), conf.getKey(), "RBT"));
             }
         });
-    }
 
+        Calendar cal = Calendar.getInstance();
+
+        cm = new CycleManager(false, conf.getCallsign(), new double[] {conf.getFreq(), conf.getListen()}, conf.getBandwidth(), conf.getSf(), conf.getCodingRate(), !conf.getImplicit(), conf.getKey()) {
+            @Override
+            public void handleTelemetry(ReceivedTelemetry telem) {
+                if (telem == null) {
+                    return;
+                }
+                getAlt().setText(String.valueOf(telem.alt));
+                getLat().setText(String.valueOf(telem.lat));
+                getLon().setText(String.valueOf(telem.lon));
+                getLastpckt().setText(cal.getTime().toString());
+                writeRx(telem.raw);
+            }
+
+            @Override
+            public void onSend(String sent) {
+                writeTx(sent);
+            }
+
+            @Override
+            public void handleImage(int iID, int pID) {
+                writeRx("Image no. " + iID + " packet no. " + pID + " received.\n");
+            }
+
+            @Override
+            public void handle2Way(ReceivedPacket packet) {
+                if (packet == null) {
+                    return;
+                    //TODO: LOGIC HERE FOR NACK PERHAPS!
+                }
+                writeRx(packet.raw);
+                switch (packet.type) {
+                    case CMD:
+                        if (packet.data.equals("TRA")) {
+                            this.txInterrupt();
+                        }
+                    case SHELL:
+                        getConsoleOutput().append(packet.data);
+                        break;
+                    case DIAG:
+                        String[] data = packet.data.split("/");
+                        getControlResults().append(data[0] + ": " + data[1] + "\n");
+                        break;
+                    case NACK:
+                        String[] ids = packet.data.split("/");
+                        String[] transmitted = getTransmitted();
+                        for (String id : Arrays.asList(ids)) {
+                            try {
+                                addToTx(transmitted[Integer.parseInt(String.valueOf(id))]);
+                            } catch (NumberFormatException e) {
+                                //Error?
+                            } catch (ArrayIndexOutOfBoundsException e) {
+                                //Error?
+                            }
+                        }
+                        break;
+                    case OTHER:
+                        //Not really sure what to do here? How about you?
+                }
+            }
+
+            @Override
+            public String getTelemetry() {
+                return null;
+            }
+
+            @Override
+            public String getImagePacket() {
+                return null;
+            }
+        };
+    }
+    
     public void init() {
         rxcon.setLineWrap(true);
         txcon.setLineWrap(true);

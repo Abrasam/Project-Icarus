@@ -23,10 +23,7 @@ public class LoRa {
     private Mode mode;
     private SpiDevice spi = null;
     public final GpioController gpio;
-    private final CycleManager cm;
     private DIOMode dioMapping = DIOMode.RXDONE;
-    private int transmitPtr;
-    private String[] transmit;
 
     /**
      * Constructor for the LoRa interface class. Parameters are the modem settings for the radio.
@@ -37,14 +34,12 @@ public class LoRa {
      * @param codingRate
      * @param explicitHeader
      */
-    public LoRa(double frequency, Bandwidth bandwidth, short spreadingFactor, CodingRate codingRate, boolean explicitHeader, CycleManager cm) throws IOException {
+    public LoRa(double frequency, Bandwidth bandwidth, short spreadingFactor, CodingRate codingRate, boolean explicitHeader) throws IOException {
         this.frequency = frequency;
         this.bandwidth = bandwidth;
         this.spreadingFactor = spreadingFactor;
         this.codingRate = codingRate;
         this.explicitHeader = explicitHeader;
-
-        this.cm = cm;
 
         spi = SpiFactory.getInstance(SpiChannel.CS1, SpiDevice.DEFAULT_SPI_SPEED, SpiDevice.DEFAULT_SPI_MODE);
         gpio = GpioFactory.getInstance();
@@ -62,15 +57,16 @@ public class LoRa {
     /**
      * Called when packet is received.
      */
-    public void onRxDone() {
+    public byte[] handlePacket() {
         try {
             byte[] payload = readPayload();
-            cm.addToRx(payload);
             resetRXPtr();
             setMode(Mode.RX);
+            return payload;
         } catch (IOException e) {
             //Error?
         }
+        return null;
     }
 
     /**
@@ -129,7 +125,6 @@ public class LoRa {
         if (this.mode != Mode.SLEEP) {
             long time = System.currentTimeMillis();
             while (Gpio.digitalRead(26) != 1) {
-                System.out.println(Gpio.digitalRead(26));
                 try {
                     Thread.sleep(10);
                 } catch (InterruptedException e) {
@@ -149,7 +144,6 @@ public class LoRa {
      */
     public Mode getMode() throws IOException {
         byte reg = readRegister(Register.OPMODE, 1)[1];
-        System.out.println(reg);
         Mode mode = Mode.lookup(reg);
         if (mode != null) {
             this.mode = mode;
@@ -228,7 +222,6 @@ public class LoRa {
         byte fifoRxCurrentAddr = readRegister(Register.FIFORXCURRENTADDR, 1)[1];
         setFifoPointer(fifoRxCurrentAddr);
         byte[] payload = Arrays.copyOfRange(readRegister(Register.FIFO, nbBytes), 1, nbBytes+1);
-        System.out.println(payload.length);
         return payload;
     }
 
@@ -280,6 +273,14 @@ public class LoRa {
         //setMode(Mode.STDBY);
     }
 
+    public boolean pollDIO0() {
+        return Gpio.digitalRead(27) == 1;
+    }
+
+    public boolean pollDIO5() {
+        return Gpio.digitalRead(26) == 1;
+    }
+
     /**
      * Set the radio to begin transmission of 10 strings.
      * @param transmitList
@@ -289,12 +290,18 @@ public class LoRa {
         setDIOMapping(DIOMode.TXDONE);
         int transmitPtr = 0;
         while (transmitPtr < transmitList.length) {
-            writePayload(transmitList[transmitPtr]);
+            if (transmitList[transmitPtr] != null) {
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                writePayload(transmitList[transmitPtr]);
+                setMode(Mode.TX);
+            }
             transmitPtr++;
-            setMode(Mode.TX);
             long time = System.currentTimeMillis();
             while (Gpio.digitalRead(27) != 1) {
-                System.out.println(Gpio.digitalRead(27));
                 try {
                     Thread.sleep(10);
                 } catch (InterruptedException e) {
@@ -304,23 +311,16 @@ public class LoRa {
                 }
             }
             clearIRQFlags();
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
         }
-
     }
 
-    public void receive(int limit, long timeoutMillis) throws IOException {
+    /*public void receive(int limit, long timeoutMillis) throws IOException {
         setDIOMapping(DIOMode.RXDONE);
         int received = 0;
-        long timeout = System.currentTimeMillis() + timeoutMillis;
-        while (received < limit && (System.currentTimeMillis() < timeout || timeoutMillis < 0)) {
-            long time = System.currentTimeMillis();
+        long timeout = Long.MAX_VALUE;
+        while ((received < limit || limit == -1) && (System.currentTimeMillis() < timeout || timeoutMillis < 0)) {
             while (Gpio.digitalRead(27) != 1 && (System.currentTimeMillis() < timeout || timeoutMillis < 0)) {
-                System.out.println(Gpio.digitalRead(27));
+                timeout = System.currentTimeMillis() + timeoutMillis;
                 try {
                     Thread.sleep(10);
                 } catch (InterruptedException e) {
@@ -329,8 +329,9 @@ public class LoRa {
                 //    break;
                 //}
             }
+            received++;
             clearIRQFlags();
             onRxDone();
         }
-    }
+    }*/
 }

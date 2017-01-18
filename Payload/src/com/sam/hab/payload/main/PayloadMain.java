@@ -26,13 +26,17 @@ public class PayloadMain {
             String[] data = gps.split(",");
             if (data.length > 9)
             {
-                String lat = (data[3].equals("S") ? "-" : "") + data[2];
-                String lon = (data[5].equals("W") ? "-" : "") + data[4];
-                String time = time = data[1].substring(0, 2) + ":" + data[1].substring(2, 4) + ":" + data[1].substring(4, 6);
-                String telemetry = "$$" + callsign +"," + String.valueOf(System.currentTimeMillis()/1000) +"," + time + "," + lat + "," + lon + "," + data[9] + "," + data[7];
-                String csum = CRC16CCITT.calcCsum(telemetry.getBytes()).toUpperCase();
-                telemetry = telemetry + "*" + csum + "\n";
-                currentTelemetry = telemetry;
+                try {
+                    String lat = (data[3].equals("S") ? "-" : "") + data[2];
+                    String lon = (data[5].equals("W") ? "-" : "") + data[4];
+                    String time = time = data[1].substring(0, 2) + ":" + data[1].substring(2, 4) + ":" + data[1].substring(4, 6);
+                    String telemetry = "$$" + callsign + "," + String.valueOf(System.currentTimeMillis() / 1000) + "," + time + "," + lat + "," + lon + "," + data[9] + "," + data[7];
+                    String csum = CRC16CCITT.calcCsum(telemetry.getBytes()).toUpperCase();
+                    telemetry = telemetry + "*" + csum + "\n";
+                    currentTelemetry = telemetry;
+                } catch (StringIndexOutOfBoundsException e) {
+                } catch (ArrayIndexOutOfBoundsException e) {
+                }
             }
         }
     }
@@ -49,6 +53,11 @@ public class PayloadMain {
         CycleManager cm = new CycleManager(true, conf.getCallsign(), new double[] {conf.getFreq(), conf.getListen()}, conf.getBandwidth(), conf.getSf(), conf.getCodingRate(), !conf.getImplicit(), conf.getKey()) {
             @Override
             public void handleTelemetry(ReceivedTelemetry telem) {
+                return;
+            }
+
+            @Override
+            public void onSend(String sent) {
                 return;
             }
 
@@ -140,14 +149,6 @@ public class PayloadMain {
                     case OTHER:
                         //Not really sure what to do here? How about you?
                 }
-                if (packet.id >= 9) {
-                    try {
-                        switchMode(Constants.Mode.TX);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        //Error?
-                    }
-                }
             }
 
             @Override
@@ -158,9 +159,20 @@ public class PayloadMain {
             @Override
             public String getImagePacket() {
                 byte[] pckt = im.getImagePacket();
-                return new String(pckt, StandardCharsets.ISO_8859_1);
+                if (pckt != null) {
+                    return new String(pckt, StandardCharsets.ISO_8859_1);
+                }
+                return null;
             }
         };
+
+        //Payloads begin by transmitting.
+        try {
+            cm.switchMode(Constants.Mode.TX);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         while (true) {
             Thread.sleep(1000);
         }

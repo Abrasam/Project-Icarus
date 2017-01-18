@@ -20,14 +20,12 @@ import java.util.Calendar;
 
 public class GroundMain {
 
-    public static void main(String[] args) throws IOException, InterruptedException {
+    public static void main(String[] args) throws InterruptedException {
 
-        Config conf = new Config();
+        final Config conf = new Config();
 
-        Calendar cal = Calendar.getInstance();
-        CycleManager cm = null;
         JFrame frame = new JFrame("Prototype 2-Way HAB Comms");
-        GUI gui = new GUI(cm, conf);
+        GUI gui = new GUI(conf);
         gui.init();
         frame.setPreferredSize(new Dimension(1024, 768));
         frame.setSize(new Dimension(1024,768));
@@ -45,7 +43,6 @@ public class GroundMain {
                         if (pic != null) {
                             Image resized = pic.getScaledInstance(512, 384, 0);
                             gui.getImg().setIcon(new ImageIcon(resized));
-                            System.out.println("########################### KITTENS! ##############################");
                         }
                         Thread.sleep(1000);
                     } catch (IOException e) {
@@ -58,74 +55,11 @@ public class GroundMain {
         });
         imageThread.start();
 
-        cm = new CycleManager(false, conf.getCallsign(), new double[] {conf.getFreq(), conf.getListen()}, conf.getBandwidth(), conf.getSf(), conf.getCodingRate(), !conf.getImplicit(), conf.getKey()) {
-            @Override
-            public void handleTelemetry(ReceivedTelemetry telem) {
-                if (telem == null) {
-                    return;
-                }
-                gui.getAlt().setText(String.valueOf(telem.alt));
-                gui.getLat().setText(String.valueOf(telem.lat));
-                gui.getLon().setText(String.valueOf(telem.lon));
-                gui.getLastpckt().setText(cal.getTime().toString());
-                gui.writeRx(telem.raw);
-            }
-
-            @Override
-            public void handleImage(int iID, int pID) {
-                gui.writeRx("Image no. " + iID + " packet no. " + pID + " received.\n");
-            }
-
-            @Override
-            public void handle2Way(ReceivedPacket packet) {
-                if (packet == null) {
-                    return;
-                    //TODO: LOGIC HERE FOR NACK PERHAPS!
-                }
-                switch (packet.type) {
-                    case CMD:
-                        if (packet.data.equals("TRA")) {
-                            try {
-                                this.switchMode(Mode.TX);
-                            } catch (IOException e) {
-                                //Error?
-                            }
-                        }
-                    case SHELL:
-                        gui.getConsoleOutput().append(packet.data);
-                        break;
-                    case DIAG:
-                        String[] data = packet.data.split("/");
-                        gui.getControlResults().append(data[0] + ": " + data[1] + "\n");
-                        break;
-                    case NACK:
-                        String[] ids = packet.data.split("/");
-                        String[] transmitted = getTransmitted();
-                        for (String id : Arrays.asList(ids)) {
-                            try {
-                                addToTx(transmitted[Integer.parseInt(String.valueOf(id))]);
-                            } catch (NumberFormatException e) {
-                                //Error?
-                            } catch (ArrayIndexOutOfBoundsException e) {
-                                //Error?
-                            }
-                        }
-                        break;
-                    case OTHER:
-                        //Not really sure what to do here? How about you?
-                }
-            }
-
-            @Override
-            public String getTelemetry() {
-                return null;
-            }
-
-            @Override
-            public String getImagePacket() {
-                return null;
-            }
-        };
-        cm.switchMode(Mode.RX);
+        //Ground station starts by transmitting.
+        try {
+            gui.cm.switchMode(Mode.RX);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
