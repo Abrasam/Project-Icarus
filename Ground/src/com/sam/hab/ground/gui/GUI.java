@@ -8,6 +8,7 @@ import com.sam.hab.util.txrx.TwoWayPacketGenerator;
 
 import javax.swing.*;
 import javax.swing.text.DefaultCaret;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
@@ -40,7 +41,21 @@ public class GUI {
         rebootButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                cm.addToTx(TwoWayPacketGenerator.generateCommand(conf.getCallsign(), conf.getKey(), "RBT"));
+                cm.addToTx(TwoWayPacketGenerator.generateCommand(conf.getCallsign(), "RBT"));
+            }
+        });
+
+        consoleInput.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String cmd = consoleInput.getText();
+                if (cmd.length() > 0 && cmd.length() < 255 - 14 - conf.getCallsign().length() && !cmd.contains(",")) {
+                    cm.addToTx(TwoWayPacketGenerator.generateShellCmdPacket(conf.getCallsign(), cmd));
+                    consoleInput.setBackground(Color.GREEN);
+                    consoleInput.setText("");
+                } else {
+                    consoleInput.setBackground(Color.RED);
+                }
             }
         });
 
@@ -81,8 +96,9 @@ public class GUI {
                         if (packet.data.equals("TRA")) {
                             this.txInterrupt();
                         }
+                        break;
                     case SHELL:
-                        getConsoleOutput().append(packet.data);
+                        getConsoleOutput().append("$: " + packet.data);
                         break;
                     case DIAG:
                         String[] data = packet.data.split("/");

@@ -6,21 +6,23 @@ import java.util.Arrays;
 
 public class TwoWayPacketGenerator {
 
-    public static String[] generateShellPackets(String callsign, String key, String[] response) {
+    public static String[] generateShellPackets(String callsign, String[] response) {
         for (int i = 0; i < response.length; i++) {
-            String pckt = ">>" + callsign + ",%s,1" + response[i];
+            String pckt = ">>" + callsign + ",%s,1," + response[i];
             response[i] = pckt;
         }
         return response;
     }
 
-    public static String generateStatPacket(String callsign, String key, String name, String stat) {
-        String pckt = ">>" + callsign + ",%s,2," + name + "/" + stat;
-        return pckt;
+    public static String generateShellCmdPacket(String callsign, String cmd) {
+        return ">>" + callsign + ",%s,1," + cmd;
     }
 
-    public static String generateCommand(String callsign, String key, String cmd) {
-        String pckt = ">>" + callsign + ",%s,0," + cmd;
-        return pckt;
+    public static String generateStatPacket(String callsign, String name, String stat) {
+        return ">>" + callsign + ",%s,2," + name + "/" + stat;
+    }
+
+    public static String generateCommand(String callsign, String cmd) {
+        return ">>" + callsign + ",%s,0," + cmd;
     }
 }

@@ -44,6 +44,7 @@ public abstract class CycleManager {
     }
 
     public void addToTx(String payload) {
+        System.out.println(payload);
         transmitQueue.add(payload);
     }
 
@@ -85,7 +86,7 @@ public abstract class CycleManager {
                 for (int i = 20; i < 89; i ++) {
                     transmit[i] = getImagePacket();
                 }
-                transmit[89] = doPacket(String.format(TwoWayPacketGenerator.generateCommand(callSign, key, "TRA"), String.valueOf(89)), key);
+                transmit[89] = doPacket(String.format(TwoWayPacketGenerator.generateCommand(callSign, "TRA"), String.valueOf(89)), key);
             }
             for (String pckt : transmit) {
                 onSend(pckt);

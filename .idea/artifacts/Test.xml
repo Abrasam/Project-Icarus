@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="Test">
+    <output-path>$PROJECT_DIR$/out/artifacts/Test</output-path>
+    <root id="archive" name="Payload.jar">
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/Util/src/META-INF/MANIFEST.MF" />
+      </element>
+      <element id="module-output" name="Payload" />
+      <element id="module-output" name="Util" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/snakeyaml-1.16.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/pi4j-core-1.1.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>

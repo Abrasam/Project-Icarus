@@ -85,7 +85,7 @@ public class PayloadMain {
                                 if (f.exists() && f.isDirectory()) {
                                     imageNo = f.list().length;
                                 }
-                                this.addToTx(TwoWayPacketGenerator.generateStatPacket(conf.getCallsign(), conf.getKey(), "IMGNO", String.valueOf(imageNo)));
+                                this.addToTx(TwoWayPacketGenerator.generateStatPacket(conf.getCallsign(), "IMGNO", String.valueOf(imageNo)));
                                 break;
                             case "BATV":
                                 //TO BE IMPLEMENTED WITH SOME VOLTMETER.
@@ -94,7 +94,7 @@ public class PayloadMain {
                                 //TO BE IMPLEMENTED WITH SOME SENSOR.
                                 break;
                             case "NOGPS":
-                                this.addToTx(TwoWayPacketGenerator.generateStatPacket(conf.getCallsign(), conf.getKey(), "NOGPS", getTelemetry().split(",")[5]));
+                                this.addToTx(TwoWayPacketGenerator.generateStatPacket(conf.getCallsign(), "NOGPS", getTelemetry().split(",")[5]));
                                 break;
                             case "IMG":
                                 //TO BE IMPLEMENTED.
@@ -105,24 +105,29 @@ public class PayloadMain {
                         Runtime rt = Runtime.getRuntime();
                         try {
                             Process pr = rt.exec(packet.data);
+                            System.out.println(packet.data);
                             if (pr.waitFor(5, TimeUnit.SECONDS)) {
+                                System.out.println("EXECUTING ORDER 66!");
                                 InputStream stream = pr.getInputStream();
                                 BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
                                 String output = "";
-                                String line = null;
-                                while ((line = reader.readLine()) != null) {
+                                String line = reader.readLine();
+                                System.out.println(line);
+                                while (line != null) {
                                     output += line;
+                                    line = reader.readLine();
                                 }
                                 int len = 255 - 14 - conf.getCallsign().length();
                                 String[] toSend = new String[(int)Math.ceil(output.length() / (float)len)];
                                 if (output.length() > len) {
                                     for (int i = 0; i < toSend.length-1; i++) {
                                         toSend[i] = output.substring(i*len, (i+1)*len);
+                                        System.out.println(toSend[i]);
                                         output = output.substring(len);
                                     }
-                                    toSend[toSend.length -1] = output;
                                 }
-                                String[] packets = TwoWayPacketGenerator.generateShellPackets(conf.getCallsign(), conf.getKey(), toSend);
+                                toSend[toSend.length -1] = output;
+                                String[] packets = TwoWayPacketGenerator.generateShellPackets(conf.getCallsign(), toSend);
                                 for (String pckt : Arrays.asList(packets)) {
                                     this.addToTx(pckt);
                                 }
