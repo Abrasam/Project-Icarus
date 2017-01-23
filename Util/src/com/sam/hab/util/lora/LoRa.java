@@ -21,13 +21,13 @@ public class LoRa {
     private CodingRate codingRate;
     private boolean explicitHeader;
     private Mode mode;
+    private final GpioController gpio;
     private SpiDevice spi = null;
-    public final GpioController gpio;
     private DIOMode dioMapping = DIOMode.RXDONE;
 
     /**
      * Constructor for the LoRa interface class. Parameters are the modem settings for the radio.
-     * This class encapsulates all the advanced LoRa register modification functionality, providing me, as the developer, with a simpler interface elsewhere in the program.
+     * This encapsulated class contains all the advanced LoRa register modification functionality, providing me, as the developer, with a simpler interface elsewhere in the program.
      * @param frequency
      * @param bandwidth
      * @param spreadingFactor
@@ -273,10 +273,18 @@ public class LoRa {
         //setMode(Mode.STDBY);
     }
 
+    /**
+     * Check the state of the DIO0 pin.
+     * @return whether the pin is at HIGH (true) or LOW (false).
+     */
     public boolean pollDIO0() {
         return Gpio.digitalRead(27) == 1;
     }
 
+    /**
+     * Check the state of the DIO5 pin.
+     * @return whether the pin is at HIGH (true) or LOW (false).
+     */
     public boolean pollDIO5() {
         return Gpio.digitalRead(26) == 1;
     }
@@ -314,24 +322,8 @@ public class LoRa {
         }
     }
 
-    /*public void receive(int limit, long timeoutMillis) throws IOException {
-        setDIOMapping(DIOMode.RXDONE);
-        int received = 0;
-        long timeout = Long.MAX_VALUE;
-        while ((received < limit || limit == -1) && (System.currentTimeMillis() < timeout || timeoutMillis < 0)) {
-            while (Gpio.digitalRead(27) != 1 && (System.currentTimeMillis() < timeout || timeoutMillis < 0)) {
-                timeout = System.currentTimeMillis() + timeoutMillis;
-                try {
-                    Thread.sleep(10);
-                } catch (InterruptedException e) {
-                }
-                //if (System.currentTimeMillis() - time > 500) {
-                //    break;
-                //}
-            }
-            received++;
-            clearIRQFlags();
-            onRxDone();
-        }
-    }*/
+    @Override
+    public String toString() {
+        return "LoRa Module Setup:\nFrequency: " + frequency + "\nBandwidth: " + bandwidth.toString() + "\nSpreading Factor: " + spreadingFactor + "\nCoding Rate: " + codingRate.toString() + "\nExplicit Header: " + explicitHeader + "\nMode: " + mode.toString();
+    }
 }

@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
+import static com.sam.hab.util.lora.Constants.Mode.TX;
+
 public abstract class CycleManager {
 
     /*
@@ -21,7 +23,7 @@ public abstract class CycleManager {
 
     private final boolean payload;
 
-    private final LoRa lora; //WON'T STAY PUBLIC!
+    private final LoRa lora;
 
     private final double[] freq;
 
@@ -61,67 +63,80 @@ public abstract class CycleManager {
         transmit = true;
     }
 
-    //TODO: This will eventually stack overflow. So, you know, fix that and all.
-    public void switchMode(Mode mode) throws IOException {
-        if (mode == Mode.TX && lora.getMode() == mode) {
-            return; //Prevent unnecessary changes and potential massive errors...
+    public void mainLoop(Mode startMode) {
+        Mode newMode = startMode;
+        while (true) {
+            try {
+                if (newMode == TX) {
+                    transmit();
+                    newMode = Mode.RX;
+                } else if (newMode == Mode.RX) {
+                    receive();
+                    if (transmit || payload) {
+                        newMode = Mode.TX;
+                    } else {
+                        newMode = Mode.RX;
+                    }
+                }
+            } catch (IOException e) {
+                System.out.println("Unexpected IO exception while running main loop.");
+                System.out.println(lora);
+            }
+
         }
-        if (mode == Mode.TX) {
-            transmit = false;
-            lora.setMode(Mode.STDBY);
-            lora.setFrequency(freq[0]);
-            String[] transmit = new String[(payload ? 90 : 10)];
-            for (int i = 0; i < 10; i ++) {
-                if (transmitQueue.size() <= 0) {
-                    transmit[i] = doPacket(">>" + callSign + "," + String.valueOf(i) + ",5,NULL", key);
-                } else {
-                    transmit[i] = doPacket(String.format(transmitQueue.poll(), String.valueOf(i)), key);
-                    transmitted[i] = transmit[i];
+    }
+
+    private void receive() throws IOException {
+        lora.setMode(Mode.STDBY);
+        lora.setFrequency(freq[1]);
+        lora.setDIOMapping(DIOMode.RXDONE);
+        lora.setMode(Mode.RX);
+        long timeout = System.currentTimeMillis() + 10000;
+        while (System.currentTimeMillis() < timeout && !transmit) {
+            while (!lora.pollDIO0() && !transmit && System.currentTimeMillis() < timeout) {
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
             }
-            if (payload) {
-                for (int i = 10; i < 20; i ++) {
-                    transmit[i] = getTelemetry();
-                }
-                for (int i = 20; i < 89; i ++) {
-                    transmit[i] = getImagePacket();
-                }
-                transmit[89] = doPacket(String.format(TwoWayPacketGenerator.generateCommand(callSign, "TRA"), String.valueOf(89)), key);
-            }
-            for (String pckt : transmit) {
-                onSend(pckt);
-            }
-            lora.send(transmit);
-            switchMode(Mode.RX);
-        } else if (mode == Mode.RX) {
-            lora.setMode(Mode.STDBY);
-            lora.setFrequency(freq[1]);
-            lora.setDIOMapping(DIOMode.RXDONE);
-            lora.setMode(Mode.RX);
-            long timeout = System.currentTimeMillis() + 10000;
-            while (System.currentTimeMillis() < timeout && !transmit) {
-                while (!lora.pollDIO0() && !transmit && System.currentTimeMillis() < timeout) {
-                    try {
-                        Thread.sleep(10);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-                if (lora.pollDIO0()) {
-                    lora.clearIRQFlags();
-                    byte[] payload = lora.handlePacket();
-                    if (payload != null) {
-                        addToRx(payload);
-                        timeout = timeout + 1000;
-                    }
+            if (lora.pollDIO0()) {
+                lora.clearIRQFlags();
+                byte[] payload = lora.handlePacket();
+                if (payload != null) {
+                    addToRx(payload);
+                    timeout = timeout + 1000;
                 }
             }
-            if (transmit || payload) {
-                switchMode(Mode.TX);
+        }
+    }
+
+    private void transmit() throws IOException {
+        transmit = false;
+        lora.setMode(Mode.STDBY);
+        lora.setFrequency(freq[0]);
+        String[] transmit = new String[(payload ? 90 : 10)];
+        for (int i = 0; i < 10; i++) {
+            if (transmitQueue.size() <= 0) {
+                transmit[i] = getTelemetry();
             } else {
-                switchMode(Mode.RX);
+                transmit[i] = doPacket(String.format(transmitQueue.poll(), String.valueOf(i)), key);
+                transmitted[i] = transmit[i];
             }
         }
+        if (payload) {
+            for (int i = 10; i < 20; i++) {
+                transmit[i] = getTelemetry();
+            }
+            for (int i = 20; i < 89; i++) {
+                transmit[i] = getImagePacket();
+            }
+            transmit[89] = doPacket(String.format(TwoWayPacketGenerator.generateCommand(callSign, "TRA"), String.valueOf(89)), key);
+        }
+        for (String pckt : transmit) {
+            onSend(pckt);
+        }
+        lora.send(transmit);
     }
 
     private String doPacket(String packet, String key) {

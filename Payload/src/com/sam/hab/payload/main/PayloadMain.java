@@ -20,6 +20,10 @@ public class PayloadMain {
     private static String currentTelemetry;
     private static String callsign;
 
+    private static Config conf;
+    private static CycleManager cm;
+    private static ImageManager im;
+
     public static void generateTelemetry(String gps) {
         if (gps.startsWith("$GNGGA"))
         {
@@ -41,16 +45,19 @@ public class PayloadMain {
         }
     }
 
-    public static void main(String[] args) throws InterruptedException {
-        Config conf = new Config();
+    public static void main(String[] args) {
+       conf = new Config();
         callsign = conf.getCallsign();
-        Thread gpsThread = new Thread(new GPSLoop());
-        gpsThread.start();
-        ImageManager im = new ImageManager(conf.getCallsign());
+        new Thread(new GPSLoop()).start();
+        im = new ImageManager(conf.getCallsign());
         while (currentTelemetry == null) {
-            Thread.sleep(500);
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
-        CycleManager cm = new CycleManager(true, conf.getCallsign(), new double[] {conf.getFreq(), conf.getListen()}, conf.getBandwidth(), conf.getSf(), conf.getCodingRate(), !conf.getImplicit(), conf.getKey()) {
+        cm = new CycleManager(true, conf.getCallsign(), new double[] {conf.getFreq(), conf.getListen()}, conf.getBandwidth(), conf.getSf(), conf.getCodingRate(), !conf.getImplicit(), conf.getKey()) {
             @Override
             public void handleTelemetry(ReceivedTelemetry telem) {
                 return;
@@ -70,73 +77,10 @@ public class PayloadMain {
             public void handle2Way(ReceivedPacket packet) {
                 switch (packet.type) {
                     case CMD:
-                        switch(packet.data) {
-                            case "RBT":
-                                Runtime rt = Runtime.getRuntime();
-                                try {
-                                    rt.exec("sudo reboot");
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-                                break;
-                            case "IMGNO":
-                                File f = new File("images/");
-                                int imageNo = 0;
-                                if (f.exists() && f.isDirectory()) {
-                                    imageNo = f.list().length;
-                                }
-                                this.addToTx(TwoWayPacketGenerator.generateStatPacket(conf.getCallsign(), "IMGNO", String.valueOf(imageNo)));
-                                break;
-                            case "BATV":
-                                //TO BE IMPLEMENTED WITH SOME VOLTMETER.
-                                break;
-                            case "EXTEMP":
-                                //TO BE IMPLEMENTED WITH SOME SENSOR.
-                                break;
-                            case "NOGPS":
-                                this.addToTx(TwoWayPacketGenerator.generateStatPacket(conf.getCallsign(), "NOGPS", getTelemetry().split(",")[5]));
-                                break;
-                            case "IMG":
-                                //TO BE IMPLEMENTED.
-                                break;
-                        }
+                        handleCommand(packet);
                         break;
                     case SHELL:
-                        Runtime rt = Runtime.getRuntime();
-                        try {
-                            Process pr = rt.exec(packet.data);
-                            System.out.println(packet.data);
-                            if (pr.waitFor(5, TimeUnit.SECONDS)) {
-                                System.out.println("EXECUTING ORDER 66!");
-                                InputStream stream = pr.getInputStream();
-                                BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
-                                String output = "";
-                                String line = reader.readLine();
-                                System.out.println(line);
-                                while (line != null) {
-                                    output += line;
-                                    line = reader.readLine();
-                                }
-                                int len = 255 - 14 - conf.getCallsign().length();
-                                String[] toSend = new String[(int)Math.ceil(output.length() / (float)len)];
-                                if (output.length() > len) {
-                                    for (int i = 0; i < toSend.length-1; i++) {
-                                        toSend[i] = output.substring(i*len, (i+1)*len);
-                                        System.out.println(toSend[i]);
-                                        output = output.substring(len);
-                                    }
-                                }
-                                toSend[toSend.length -1] = output;
-                                String[] packets = TwoWayPacketGenerator.generateShellPackets(conf.getCallsign(), toSend);
-                                for (String pckt : Arrays.asList(packets)) {
-                                    this.addToTx(pckt);
-                                }
-                            }
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
+                        handleShell(packet);
                         break;
                     case NACK:
                         String[] ids = packet.data.split("/");
@@ -172,14 +116,65 @@ public class PayloadMain {
         };
 
         //Payloads begin by transmitting.
+        cm.mainLoop(Constants.Mode.TX);
+    }
+
+    public static void handleCommand(ReceivedPacket packet) {
+        switch(packet.data) {
+            case "RBT":
+                Runtime rt = Runtime.getRuntime();
+                try {
+                    rt.exec("sudo reboot");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case "IMGNO":
+                File f = new File("images/");
+                int imageNo = 0;
+                if (f.exists() && f.isDirectory()) {
+                    imageNo = f.list().length;
+                }
+                cm.addToTx(TwoWayPacketGenerator.generateStatPacket(conf.getCallsign(), "IMGNO", String.valueOf(imageNo)));
+                break;
+            case "IMG":
+                im.fullDownload();
+            break;
+        }
+    }
+
+    public static void handleShell(ReceivedPacket packet) {
+        Runtime rt = Runtime.getRuntime();
         try {
-            cm.switchMode(Constants.Mode.TX);
+            Process pr = rt.exec(packet.data);
+            System.out.println(packet.data);
+            if (pr.waitFor(5, TimeUnit.SECONDS)) {
+                InputStream stream = pr.getInputStream();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+                String output = "";
+                String line = reader.readLine();
+                while (line != null) {
+                    output += line;
+                    line = reader.readLine();
+                }
+                int len = 255 - 14 - conf.getCallsign().length();
+                String[] toSend = new String[(int)Math.ceil(output.length() / (float)len)];
+                if (output.length() > len) {
+                    for (int i = 0; i < toSend.length-1; i++) {
+                        toSend[i] = output.substring(i*len, (i+1)*len);
+                        output = output.substring(len);
+                    }
+                }
+                toSend[toSend.length -1] = output;
+                String[] packets = TwoWayPacketGenerator.generateShellPackets(conf.getCallsign(), toSend);
+                for (String pckt : Arrays.asList(packets)) {
+                    cm.addToTx(pckt);
+                }
+            }
         } catch (IOException e) {
             e.printStackTrace();
-        }
-
-        while (true) {
-            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 }

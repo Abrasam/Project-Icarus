@@ -28,28 +28,19 @@ public class PacketHandler implements Runnable {
                     byte[] bytes = packet.getBytes(StandardCharsets.ISO_8859_1);
                     if (packet.length() > 0) {
                         if (packet.charAt(0) == '>') {
-                            System.out.println(packet);
-
                             ReceivedPacket pckt = PacketParser.parseTwoWay(packet, cm.key);
-
-                            System.out.println(pckt == null);
-
                             cm.handle2Way(pckt);
 
                             //Logic to upload and log goes here.
 
                         } else if (packet.charAt(0) == '$') {
                             ReceivedTelemetry telem = PacketParser.parseTelemetry(packet);
-
                             if (telem != null) {
-
                                 cm.handleTelemetry(telem);
-
                                 //Logic to upload to server goes here.
                             }
                         } else {
                             int[] res = PacketParser.parseSSDV(bytes);
-                            BufferedImage pic = null;
                             try {
                                 cm.handleImage(res[0], res[1]);
                             } catch (NullPointerException e) {

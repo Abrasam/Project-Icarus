@@ -56,10 +56,6 @@ public class GroundMain {
         imageThread.start();
 
         //Ground station starts by transmitting.
-        try {
-            gui.cm.switchMode(Mode.RX);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        gui.cm.mainLoop(Mode.RX);
     }
 }

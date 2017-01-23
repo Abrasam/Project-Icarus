@@ -28,6 +28,7 @@ public class ImageManager {
                     while (true) {
                         if (fullDownload) {
                             rt.exec("./ssdv -e -c " + "CALLSIGN" + " -i " + String.valueOf(count) + " " + latestImage + " out.bin");
+                            fullDownload = false;
                         } else {
                             String name = String.valueOf(System.currentTimeMillis() / 1000) + ".jpg";
                             rt.exec("raspistill -o images/" + name).waitFor();

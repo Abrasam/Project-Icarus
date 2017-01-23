@@ -31,13 +31,14 @@ public class GUI {
     private JTextArea consoleOutput;
     private JTextField consoleInput;
     private JButton rebootButton;
-    private JButton batteryVoltageButton;
-    private JButton internalTempButton;
     private JTextArea controlResults;
+    private JButton fullDownload;
+    private JButton noPicsStored;
 
     public final CycleManager cm;
 
     public GUI(Config conf) {
+
         rebootButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -56,6 +57,20 @@ public class GUI {
                 } else {
                     consoleInput.setBackground(Color.RED);
                 }
+            }
+        });
+
+        fullDownload.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                cm.addToTx(TwoWayPacketGenerator.generateCommand(conf.getCallsign(), "IMG"));
+            }
+        });
+
+        noPicsStored.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                cm.addToTx(TwoWayPacketGenerator.generateCommand(conf.getCallsign(), "IMGNO"));
             }
         });
 
