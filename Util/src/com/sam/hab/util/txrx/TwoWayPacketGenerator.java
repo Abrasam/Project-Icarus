@@ -8,7 +8,7 @@ public class TwoWayPacketGenerator {
 
     public static String[] generateShellPackets(String callsign, String[] response) {
         for (int i = 0; i < response.length; i++) {
-            String pckt = ">>" + callsign + ",%s,1," + response[i];
+            String pckt = ">>" + callsign + ",%s,1," + response[i].replace('\n', (char)0);
             response[i] = pckt;
         }
         return response;

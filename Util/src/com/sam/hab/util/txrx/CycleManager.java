@@ -118,7 +118,11 @@ public abstract class CycleManager {
         String[] transmit = new String[(payload ? 90 : 10)];
         for (int i = 0; i < 10; i++) {
             if (transmitQueue.size() <= 0) {
-                transmit[i] = getTelemetry();
+                if (payload) {
+                    transmit[i] = getTelemetry();
+                } else {
+                    transmit[i] = null;
+                }
             } else {
                 transmit[i] = doPacket(String.format(transmitQueue.poll(), String.valueOf(i)), key);
                 transmitted[i] = transmit[i];

@@ -91,7 +91,9 @@ public class GUI {
 
             @Override
             public void onSend(String sent) {
-                writeTx(sent);
+                if (sent != null) {
+                    writeTx(sent);
+                }
             }
 
             @Override
@@ -113,7 +115,7 @@ public class GUI {
                         }
                         break;
                     case SHELL:
-                        getConsoleOutput().append("$: " + packet.data);
+                        getConsoleOutput().append(packet.data.replace((char)0, '\n'));
                         break;
                     case DIAG:
                         String[] data = packet.data.split("/");
@@ -152,6 +154,7 @@ public class GUI {
     public void init() {
         rxcon.setLineWrap(true);
         txcon.setLineWrap(true);
+        consoleOutput.setLineWrap(true);
         ((DefaultCaret)rxcon.getCaret()).setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
         ((DefaultCaret)txcon.getCaret()).setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
     }

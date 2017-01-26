@@ -147,21 +147,21 @@ public class PayloadMain {
         Runtime rt = Runtime.getRuntime();
         try {
             Process pr = rt.exec(packet.data);
-            System.out.println(packet.data);
             if (pr.waitFor(5, TimeUnit.SECONDS)) {
                 InputStream stream = pr.getInputStream();
                 BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
                 String output = "";
                 String line = reader.readLine();
                 while (line != null) {
-                    output += line;
+                    output += line + "\n";
                     line = reader.readLine();
                 }
+                System.out.println(output);
                 int len = 255 - 14 - conf.getCallsign().length();
                 String[] toSend = new String[(int)Math.ceil(output.length() / (float)len)];
                 if (output.length() > len) {
                     for (int i = 0; i < toSend.length-1; i++) {
-                        toSend[i] = output.substring(i*len, (i+1)*len);
+                        toSend[i] = output.substring(0, (len > output.length() ? output.length() -1 : len -1));
                         output = output.substring(len);
                     }
                 }
