@@ -157,6 +157,7 @@ public class GUI {
         consoleOutput.setLineWrap(true);
         ((DefaultCaret)rxcon.getCaret()).setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
         ((DefaultCaret)txcon.getCaret()).setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+        ((DefaultCaret)consoleOutput.getCaret()).setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
     }
 
     public JTextArea getControlResults() {

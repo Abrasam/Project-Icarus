@@ -43,10 +43,11 @@ public class GPSLoop implements Runnable {
                 }
             }
             catch (IOException e) {
-                e.printStackTrace();}
+                e.printStackTrace();
+            }
             try {
-                Thread.sleep(10L);}
-            catch (InterruptedException e) {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }

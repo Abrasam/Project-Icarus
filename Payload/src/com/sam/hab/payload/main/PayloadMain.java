@@ -46,9 +46,10 @@ public class PayloadMain {
     }
 
     public static void main(String[] args) {
-       conf = new Config();
+        conf = new Config();
         callsign = conf.getCallsign();
-        new Thread(new GPSLoop()).start();
+        Thread gps = new Thread(new GPSLoop());
+        gps.start();
         im = new ImageManager(conf.getCallsign());
         while (currentTelemetry == null) {
             try {
@@ -102,6 +103,7 @@ public class PayloadMain {
 
             @Override
             public String getTelemetry() {
+                System.out.println(currentTelemetry);
                 return currentTelemetry;
             }
 
