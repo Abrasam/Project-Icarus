@@ -1,9 +1,9 @@
-from http.server import HTTPServer,BaseHTTPRequestHandler
+from http.server import HTTPServer,SimpleHTTPRequestHandler
 from time import strftime
 import requests as r
 import base64,hashlib
-class TestHandler(BaseHTTPRequestHandler):
-    def do_GET(self):
+class TestHandler(SimpleHTTPRequestHandler):
+    '''def do_GET(self):
         path = self.path
         self.send_response(200)
         self.send_header('Content-type','text/html')
@@ -11,7 +11,7 @@ class TestHandler(BaseHTTPRequestHandler):
         if path[1:] == "wibble":
             self.wfile.write("wobble".encode())
         else:
-            self.wfile.write("wibble with me?".encode())
+            self.wfile.write("wibble with me?".encode())'''
     def do_PUT(self):
         path = self.path
         length = int(self.headers['content-length'])
