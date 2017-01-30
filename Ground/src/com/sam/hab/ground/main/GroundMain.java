@@ -45,9 +45,7 @@ public class GroundMain {
                             gui.getImg().setIcon(new ImageIcon(resized));
                         }
                         Thread.sleep(1000);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } catch (InterruptedException e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
