@@ -155,6 +155,7 @@ public class GUI {
         rxcon.setLineWrap(true);
         txcon.setLineWrap(true);
         consoleOutput.setLineWrap(true);
+        consoleOutput.setFont(new Font("monospaced", Font.PLAIN, 12));
         ((DefaultCaret)rxcon.getCaret()).setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
         ((DefaultCaret)txcon.getCaret()).setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
         ((DefaultCaret)consoleOutput.getCaret()).setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
