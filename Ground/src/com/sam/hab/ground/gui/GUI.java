@@ -1,5 +1,6 @@
 package com.sam.hab.ground.gui;
 
+import com.sam.hab.ground.web.RequestHandler;
 import com.sam.hab.util.lora.Config;
 import com.sam.hab.util.txrx.CycleManager;
 import com.sam.hab.util.txrx.ReceivedPacket;
@@ -11,6 +12,7 @@ import javax.swing.text.DefaultCaret;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Calendar;
 
@@ -76,6 +78,8 @@ public class GUI {
 
         Calendar cal = Calendar.getInstance();
 
+        RequestHandler requestHandler = new RequestHandler();
+
         cm = new CycleManager(false, conf.getCallsign(), new double[] {conf.getFreq(), conf.getListen()}, conf.getBandwidth(), conf.getSf(), conf.getCodingRate(), !conf.getImplicit(), conf.getKey()) {
             @Override
             public void handleTelemetry(ReceivedTelemetry telem) {
@@ -87,6 +91,7 @@ public class GUI {
                 getLon().setText(String.valueOf(telem.lon));
                 getLastpckt().setText(cal.getTime().toString());
                 writeRx(telem.raw);
+                requestHandler.sendTelemetry(telem.raw);
             }
 
             @Override
@@ -97,8 +102,9 @@ public class GUI {
             }
 
             @Override
-            public void handleImage(int iID, int pID) {
+            public void handleImage(byte[] bytes, int iID, int pID) {
                 writeRx("Image no. " + iID + " packet no. " + pID + " received.\n");
+                requestHandler.sendTelemetry(new String(bytes, StandardCharsets.ISO_8859_1));
             }
 
             @Override

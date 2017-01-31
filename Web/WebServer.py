@@ -28,12 +28,15 @@ class TestHandler(SimpleHTTPRequestHandler):
             headers = {"Accept" : "application/json", "Content-Type" : "application/json", "charsets" : "utf-8"}
             try:
                 res = r.put("http://habitat.habhub.org/habitat/_design/payload_telemetry/_update/add_listener/"+sha256, headers=headers, data=json)
+                print(res)
             except:
                 print("Unable to reach habitat.")
             self.send_response(201)
             self.send_header('Content-type','text/html')
             self.end_headers()
             self.wfile.write("Telemetry received.".encode())
+        elif path == "/imageUpload":
+            pass
 
 server = HTTPServer(("",8080), TestHandler)
 try:

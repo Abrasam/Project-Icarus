@@ -159,7 +159,7 @@ public abstract class CycleManager {
 
     public abstract void onSend(String sent);
 
-    public abstract void handleImage(int iID, int pID);
+    public abstract void handleImage(byte[] bytes, int iID, int pID);
 
     public abstract void handle2Way(ReceivedPacket packet);
 

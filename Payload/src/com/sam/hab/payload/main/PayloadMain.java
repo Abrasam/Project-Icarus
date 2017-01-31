@@ -35,7 +35,7 @@ public class PayloadMain {
                     String lon = (data[5].equals("W") ? "-" : "") + data[4];
                     String time = time = data[1].substring(0, 2) + ":" + data[1].substring(2, 4) + ":" + data[1].substring(4, 6);
                     String telemetry = "$$" + callsign + "," + String.valueOf(System.currentTimeMillis() / 1000) + "," + time + "," + lat + "," + lon + "," + data[9] + "," + data[7];
-                    String csum = CRC16CCITT.calcCsum(telemetry.getBytes()).toUpperCase();
+                    String csum = CRC16CCITT.calcCsum(telemetry.getBytes(StandardCharsets.ISO_8859_1)).toUpperCase();
                     telemetry = telemetry + "*" + csum + "\n";
                     currentTelemetry = telemetry;
                 } catch (StringIndexOutOfBoundsException e) {
@@ -70,7 +70,7 @@ public class PayloadMain {
             }
 
             @Override
-            public void handleImage(int iID, int pID) {
+            public void handleImage(byte[] bytes, int iID, int pID) {
                 return;
             }
 

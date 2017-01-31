@@ -35,7 +35,7 @@ public class PacketHandler implements Runnable {
                         } else {
                             int[] res = PacketParser.parseSSDV(bytes);
                             try {
-                                cm.handleImage(res[0], res[1]);
+                                cm.handleImage(bytes, res[0], res[1]);
                             } catch (NullPointerException e) {
                                 e.printStackTrace();
                                 //Error?

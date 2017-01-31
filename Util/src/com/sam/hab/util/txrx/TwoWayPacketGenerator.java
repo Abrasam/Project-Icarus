@@ -1,8 +1,5 @@
 package com.sam.hab.util.txrx;
 
-import com.sam.hab.util.csum.CRC16CCITT;
-
-import java.util.Arrays;
 
 public class TwoWayPacketGenerator {
 

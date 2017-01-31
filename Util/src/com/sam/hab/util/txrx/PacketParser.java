@@ -12,9 +12,9 @@ public class PacketParser {
 
     public static ReceivedPacket parseTwoWay(String raw, String key) {
         String cSum = raw.split("\\*")[1].replace("\n", "");
-        String packet = raw.split("\\*")[0];
+        String packet = raw.split("\\*")[0].replace(">", "");;
         //packet = packet.replace(">", "");
-        if (!CRC16CCITT.calcCsum((packet + key).getBytes()).equals(cSum)) {
+        if (!CRC16CCITT.calcCsum((packet.replace(">", "") + key).getBytes()).equals(cSum)) {
             return null;
         }
         String[] packetList = packet.split(",");
@@ -27,7 +27,7 @@ public class PacketParser {
 
     public static ReceivedTelemetry parseTelemetry(String raw) {
         String cSum = raw.split("\\*")[1].replace("\n", "");
-        String packet = raw.split("\\*")[0];
+        String packet = raw.split("\\*")[0].replace("$", "");
         if (!CRC16CCITT.calcCsum((packet).getBytes()).equals(cSum)) {
             return null;
         }
