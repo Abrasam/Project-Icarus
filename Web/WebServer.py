@@ -36,8 +36,10 @@ class TestHandler(SimpleHTTPRequestHandler):
             self.end_headers()
             self.wfile.write("Telemetry received.".encode())
         elif path == "/imageUpload":
+            ############################################
+            # Database logging and decoding goes here. #
+            ############################################
             pass
-
 server = HTTPServer(("",8080), TestHandler)
 try:
     server.serve_forever()
