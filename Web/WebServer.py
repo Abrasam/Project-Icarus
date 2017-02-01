@@ -1,7 +1,13 @@
 from http.server import HTTPServer,SimpleHTTPRequestHandler
 from time import strftime
 import requests as r
-import base64,hashlib
+import base64,hashlib,MySQLdb
+
+checksum = crcmod.predefined.mkCrcFun('crc-ccitt-false')
+
+db = MySQLdb.connect(host="localhost",user="root",passwd="OlympiaRPG",db="icarus")
+cursor = db.cursor()
+
 class TestHandler(SimpleHTTPRequestHandler):
     '''def do_GET(self):
         path = self.path
@@ -38,8 +44,29 @@ class TestHandler(SimpleHTTPRequestHandler):
         elif path == "/imageUpload":
             pass
 
-server = HTTPServer(("",8080), TestHandler)
+def parse(raw):
+    data = data.split("*")
+    sentence = data[0].replace("$","")
+    csum = data[1]
+    if csum != hex(checksum(sentence,0xFFFF)).upper():
+        return
+    packetData = sentence.split(",")
+    callsign = packet[0]
+    lat = packetData[3]
+    lon = packetData[4]
+    if lat == "" or lon == "":
+        return
+    cursor.execute("SELECT * FROM payload WHERE callsign=", (callsign,))
+    result = cursor.fetchall()
+    for row in result:
+        print(row)
+
+'''server = HTTPServer(("",8080), TestHandler)
 try:
     server.serve_forever()
 except KeyboardInterrupt:
     server.server_close()
+'''
+
+
+print(cursor.fetchall())
