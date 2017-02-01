@@ -1,7 +1,7 @@
 from http.server import HTTPServer,SimpleHTTPRequestHandler
 from time import strftime
 import requests as r
-import base64,hashlib,MySQLdb
+import base64,hashlib,MySQLdb,crcmod
 
 checksum = crcmod.predefined.mkCrcFun('crc-ccitt-false')
 
@@ -18,14 +18,12 @@ class TestHandler(SimpleHTTPRequestHandler):
             self.wfile.write("wobble".encode())
         else:
             self.wfile.write("wibble with me?".encode())'''
+
     def do_PUT(self):
         path = self.path
         length = int(self.headers['content-length'])
         data = self.rfile.read(length).decode("iso-8859-1")
         if path == "/telemetryUpload":
-            ###############################
-            # Database logging goes here. #
-            ###############################
             b64 = (base64.b64encode(data.encode()))
             sha256 = hashlib.sha256(b64).hexdigest()
             b64 = b64.decode()
@@ -44,7 +42,7 @@ class TestHandler(SimpleHTTPRequestHandler):
         elif path == "/imageUpload":
             pass
 
-def parse(raw):
+def parseTelem(raw):
     data = data.split("*")
     sentence = data[0].replace("$","")
     csum = data[1]
@@ -56,10 +54,17 @@ def parse(raw):
     lon = packetData[4]
     if lat == "" or lon == "":
         return
-    cursor.execute("SELECT * FROM payload WHERE callsign=", (callsign,))
+    #Parametrized SQL statements.
+    cursor.execute("SELECT * FROM payload WHERE callsign=%s", (callsign,))
     result = cursor.fetchall()
+    minID = -1
+    minDate = datetime.datetime.now()
     for row in result:
-        print(row)
+        if row[2] < minDate:
+            minID = row[0]
+            minDate = row[2]
+    if minID != -1:
+        pass
 
 '''server = HTTPServer(("",8080), TestHandler)
 try:
@@ -68,5 +73,7 @@ except KeyboardInterrupt:
     server.server_close()
 '''
 
-
-print(cursor.fetchall())
+cursor.execute("SELECT * FROM payload WHERE callsign=%s", ("TEST01",))
+result = cursor.fetchall()
+for row in result:
+    print(row[2])
