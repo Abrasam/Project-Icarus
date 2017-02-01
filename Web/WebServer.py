@@ -1,7 +1,13 @@
 from http.server import HTTPServer,SimpleHTTPRequestHandler
 from time import strftime
 import requests as r
-import base64,hashlib
+import base64,hashlib,MySQLdb,crcmod
+
+checksum = crcmod.predefined.mkCrcFun('crc-ccitt-false')
+
+db = MySQLdb.connect(host="localhost",user="root",passwd="OlympiaRPG",db="icarus")
+cursor = db.cursor()
+
 class TestHandler(SimpleHTTPRequestHandler):
     '''def do_GET(self):
         path = self.path
@@ -12,14 +18,12 @@ class TestHandler(SimpleHTTPRequestHandler):
             self.wfile.write("wobble".encode())
         else:
             self.wfile.write("wibble with me?".encode())'''
+
     def do_PUT(self):
         path = self.path
         length = int(self.headers['content-length'])
         data = self.rfile.read(length).decode("iso-8859-1")
         if path == "/telemetryUpload":
-            ###############################
-            # Database logging goes here. #
-            ###############################
             b64 = (base64.b64encode(data.encode()))
             sha256 = hashlib.sha256(b64).hexdigest()
             b64 = b64.decode()
@@ -38,8 +42,38 @@ class TestHandler(SimpleHTTPRequestHandler):
         elif path == "/imageUpload":
             pass
 
-server = HTTPServer(("",8080), TestHandler)
+def parseTelem(raw):
+    data = data.split("*")
+    sentence = data[0].replace("$","")
+    csum = data[1]
+    if csum != hex(checksum(sentence,0xFFFF)).upper():
+        return
+    packetData = sentence.split(",")
+    callsign = packet[0]
+    lat = packetData[3]
+    lon = packetData[4]
+    if lat == "" or lon == "":
+        return
+    #Parametrized SQL statements.
+    cursor.execute("SELECT * FROM payload WHERE callsign=%s", (callsign,))
+    result = cursor.fetchall()
+    minID = -1
+    minDate = datetime.datetime.now()
+    for row in result:
+        if row[2] < minDate:
+            minID = row[0]
+            minDate = row[2]
+    if minID != -1:
+        pass
+
+'''server = HTTPServer(("",8080), TestHandler)
 try:
     server.serve_forever()
 except KeyboardInterrupt:
     server.server_close()
+'''
+
+cursor.execute("SELECT * FROM payload WHERE callsign=%s", ("TEST01",))
+result = cursor.fetchall()
+for row in result:
+    print(row[2])
