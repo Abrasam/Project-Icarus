@@ -44,17 +44,14 @@ class TestHandler(SimpleHTTPRequestHandler):
 
 def parseTelem(raw):
     data = data.split("*")
-    sentence = data[0].replace("$","")
+    sentence = data[0].replace(">","")
     csum = data[1]
     if csum != hex(checksum(sentence,0xFFFF)).upper():
         return
     packetData = sentence.split(",")
     callsign = packet[0]
-    lat = packetData[3]
-    lon = packetData[4]
-    if lat == "" or lon == "":
-        return
-    #Parametrized SQL statements.
+    packetType = data[2]
+    data = data[3]
     cursor.execute("SELECT * FROM payload WHERE callsign=%s", (callsign,))
     result = cursor.fetchall()
     minID = -1
@@ -63,8 +60,19 @@ def parseTelem(raw):
         if row[2] < minDate:
             minID = row[0]
             minDate = row[2]
-    if minID != -1:
-        pass
+    if minID == -1:
+        return
+    cursor.execute("SELECT * FROM flight WHERE payload_id=%s", (minID,))
+    result = cursor.fetchall()
+    flight = None
+    for row in result:
+        if row[3] < datetime.datetime.now() and row[4] > datetime.datetime.now():
+            flight = row
+            break
+    if flight is None:
+        return
+    
+    
 
 '''server = HTTPServer(("",8080), TestHandler)
 try:
