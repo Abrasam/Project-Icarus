@@ -44,4 +44,13 @@ public class RequestHandler {
             e.printStackTrace();
         }
     }
+
+    public void sendTwoWay(String packet) {
+        try {
+            URL url = new URL(server + "packetUpload");
+            sendPut(url, packet);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+    }
 }

@@ -22,7 +22,7 @@ public class PacketHandler implements Runnable {
                     if (packet.length() > 0) {
                         if (packet.charAt(0) == '>') {
                             ReceivedPacket pckt = PacketParser.parseTwoWay(packet, cm.key);
-                            cm.handle2Way(pckt);
+                            cm.handleTwoWay(pckt);
 
                             //Logic to upload and log goes here.
 

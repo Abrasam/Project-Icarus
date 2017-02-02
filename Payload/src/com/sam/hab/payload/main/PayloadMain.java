@@ -75,7 +75,7 @@ public class PayloadMain {
             }
 
             @Override
-            public void handle2Way(ReceivedPacket packet) {
+            public void handleTwoWay(ReceivedPacket packet) {
                 switch (packet.type) {
                     case CMD:
                         handleCommand(packet);

@@ -161,7 +161,7 @@ public abstract class CycleManager {
 
     public abstract void handleImage(byte[] bytes, int iID, int pID);
 
-    public abstract void handle2Way(ReceivedPacket packet);
+    public abstract void handleTwoWay(ReceivedPacket packet);
 
     public abstract String getTelemetry();
 

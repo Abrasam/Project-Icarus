@@ -108,7 +108,7 @@ public class GUI {
             }
 
             @Override
-            public void handle2Way(ReceivedPacket packet) {
+            public void handleTwoWay(ReceivedPacket packet) {
                 if (packet == null) {
                     return;
                     //TODO: LOGIC HERE FOR NACK PERHAPS!
@@ -143,6 +143,7 @@ public class GUI {
                     case OTHER:
                         //Not really sure what to do here? How about you?
                 }
+                requestHandler.sendTwoWay(packet.raw);
             }
 
             @Override
