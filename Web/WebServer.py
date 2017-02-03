@@ -9,15 +9,25 @@ db = MySQLdb.connect(host="localhost",user="root",passwd="OlympiaRPG",db="icarus
 cursor = db.cursor()
 
 class TestHandler(SimpleHTTPRequestHandler):
-    '''def do_GET(self):
-        path = self.path
+    def do_GET(self):
+        path = self.path[1:]
+        cursor.execute("SELECT * FROM payload WHERE callsign=%s", (path,))
+        result = cursor.fetchall()
+        maxID = -1
+        maxDate = datetime.datetime(1970, 1, 1)
+        for row in result:
+            if row[2] > maxDate:
+                maxID = row[0]
+                maxDate = row[2]
+        if maxID == -1:
+            return
+        cursor.execute("SELECT * FROM payload WHERE payload_id=%s", (maxID,))
+        result = cursor.fetchall()[0]
         self.send_response(200)
         self.send_header('Content-type','text/html')
         self.end_headers()
-        if path[1:] == "wibble":
-            self.wfile.write("wobble".encode())
-        else:
-            self.wfile.write("wibble with me?".encode())'''
+        self.wfile.write(result[0].encode("iso-8859-1"))
+            
 
     def do_PUT(self):
         path = self.path
@@ -68,13 +78,13 @@ def handlePacket(raw):
     data = data[3]
     cursor.execute("SELECT * FROM payload WHERE callsign=%s", (callsign,))
     result = cursor.fetchall()
-    minID = -1
-    minDate = datetime.datetime.now()
+    maxID = -1
+    maxDate = datetime.datetime(1970, 1, 1)
     for row in result:
-        if row[2] < minDate:
-            minID = row[0]
-            minDate = row[2]
-    if minID == -1:
+        if row[2] > minDate:
+            maxID = row[0]
+            maxDate = row[2]
+    if maxID == -1:
         return
     cursor.execute("SELECT * FROM flight WHERE payload_id=%s", (minID,))
     result = cursor.fetchall()
