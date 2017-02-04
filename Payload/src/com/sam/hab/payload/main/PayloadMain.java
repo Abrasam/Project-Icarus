@@ -9,7 +9,6 @@ import com.sam.hab.util.txrx.ReceivedPacket;
 import com.sam.hab.util.txrx.ReceivedTelemetry;
 import com.sam.hab.util.txrx.TwoWayPacketGenerator;
 
-import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -34,9 +33,10 @@ public class PayloadMain {
                     String lat = (data[3].equals("S") ? "-" : "") + data[2];
                     String lon = (data[5].equals("W") ? "-" : "") + data[4];
                     String time = time = data[1].substring(0, 2) + ":" + data[1].substring(2, 4) + ":" + data[1].substring(4, 6);
-                    String telemetry = "$$" + callsign + "," + String.valueOf(System.currentTimeMillis() / 1000) + "," + time + "," + lat + "," + lon + "," + data[9] + "," + data[7];
-                    String csum = CRC16CCITT.calcCsum(telemetry.getBytes(StandardCharsets.ISO_8859_1)).toUpperCase();
-                    telemetry = telemetry + "*" + csum + "\n";
+                    String telemetry = callsign + "," + String.valueOf(System.currentTimeMillis() / 1000) + "," + time + "," + lat + "," + lon + "," + data[9] + "," + data[7];
+                    System.out.println(telemetry);
+                    String csum = CRC16CCITT.calcCsum(telemetry.getBytes(StandardCharsets.ISO_8859_1));
+                    telemetry = "$$" + telemetry + "*" + csum + "\n";
                     currentTelemetry = telemetry;
                 } catch (StringIndexOutOfBoundsException e) {
                 } catch (ArrayIndexOutOfBoundsException e) {
@@ -83,19 +83,6 @@ public class PayloadMain {
                     case SHELL:
                         handleShell(packet);
                         break;
-                    case NACK:
-                        String[] ids = packet.data.split("/");
-                        String[] transmitted = getTransmitted();
-                        for (String id : Arrays.asList(ids)) {
-                            try {
-                                addToTx(transmitted[Integer.parseInt(String.valueOf(id))]);
-                            } catch (NumberFormatException e) {
-                                //Error?
-                            } catch (ArrayIndexOutOfBoundsException e) {
-                                //Error?
-                            }
-                        }
-                        break;
                     case OTHER:
                         //Not really sure what to do here? How about you?
                 }
@@ -140,8 +127,9 @@ public class PayloadMain {
                 cm.addToTx(TwoWayPacketGenerator.generateStatPacket(conf.getCallsign(), "IMGNO", String.valueOf(imageNo)));
                 break;
             case "IMG":
-                im.fullDownload();
-            break;
+                boolean sendImages = cm.toggleImage();
+                cm.addToTx(TwoWayPacketGenerator.generateStatPacket(conf.getCallsign(), "IMG", String.valueOf(sendImages)));
+                break;
         }
     }
 

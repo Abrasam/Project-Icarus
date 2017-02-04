@@ -91,6 +91,7 @@ public class GUI {
                 getLon().setText(String.valueOf(telem.lon));
                 getLastpckt().setText(cal.getTime().toString());
                 writeRx(telem.raw);
+                System.out.println("KITTENS");
                 requestHandler.sendTelemetry(telem.raw);
             }
 
@@ -104,7 +105,7 @@ public class GUI {
             @Override
             public void handleImage(byte[] bytes, int iID, int pID) {
                 writeRx("Image no. " + iID + " packet no. " + pID + " received.\n");
-                requestHandler.sendTelemetry(new String(bytes, StandardCharsets.ISO_8859_1));
+                requestHandler.sendImage(new String(bytes, StandardCharsets.ISO_8859_1));
             }
 
             @Override

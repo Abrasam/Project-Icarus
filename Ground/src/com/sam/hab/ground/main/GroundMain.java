@@ -20,8 +20,8 @@ public class GroundMain {
         JFrame frame = new JFrame("Prototype 2-Way HAB Comms");
         GUI gui = new GUI(conf);
         gui.init();
-        frame.setPreferredSize(new Dimension(1000, 720));
-        frame.setSize(new Dimension(1000,720));
+        frame.setPreferredSize(new Dimension(1050, 720));
+        frame.setSize(new Dimension(1050,720));
         frame.setContentPane(gui.getPanelMain());
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();

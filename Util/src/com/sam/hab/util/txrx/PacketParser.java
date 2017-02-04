@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 public class PacketParser {
 
     public static ReceivedPacket parseTwoWay(String raw, String key) {
+        System.out.println(raw);
         String cSum = raw.split("\\*")[1].replace("\n", "");
         String packet = raw.split("\\*")[0].replace(">", "");;
         //packet = packet.replace(">", "");

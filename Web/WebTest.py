@@ -57,20 +57,22 @@ def handleTelem(data):
         print("Unable to reach habitat.")
 
 def handleSSDV(data):
-    b64 = base64.b64encode(bytes(packet)).decode('utf-8')
+    data = "U" + data
+    b64 = base64.b64encode(bytearray(data.encode('iso-8859-1'))).decode('utf-8')
     headers = {"Accept" : "application/json", "Content-Type" : "application/json", "charsets" : "utf-8"}
     now = strftime("%Y-%0m-%0dT%H:%M:%SZ")
     upload = "{\"type\": \"packet\", \"packet\": \"%s\", \"encoding\": \"base64\", \"received\": \"%s\", \"receiver\": \"%s\"}" % (b64, now, "SAMPI")
     try:
-        res = requests.post("http://ssdv.habhub.org/api/v0/packets", headers=headers, data=upload, timeout=2)
+        res = r.post("http://ssdv.habhub.org/api/v0/packets", headers=headers, data=upload, timeout=2)
+        print(res)
     except:
         print("Unable to reach habitat.")
 
 def handlePacket(raw):
-    data = data.split("*")
+    data = raw.split("*")
     sentence = data[0].replace(">","")
     csum = data[1]
-    if csum != hex(checksum(sentence,0xFFFF)).upper():
+    if csum != hex(checksum(sentence.encode('iso-8859-1'),0xFFFF)).upper():
         return
     packetData = sentence.split(",")
     callsign = packet[0]
@@ -103,3 +105,4 @@ try:
     server.serve_forever()
 except KeyboardInterrupt:
     server.server_close()
+

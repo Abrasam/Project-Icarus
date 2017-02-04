@@ -37,6 +37,7 @@ public abstract class CycleManager {
         this.key = key;
         try {
             lora = new LoRa(freq[0], bandwidth, sf, codingRate, explicit);
+            lora.setPAConfig((short)(payload ? 0x08 : 0b00001111));
         } catch (IOException e) {
             throw new RuntimeException("LoRa module contact not established, check your wiring perhaps?");
         }
@@ -61,6 +62,16 @@ public abstract class CycleManager {
 
     public void txInterrupt() {
         transmit = true;
+    }
+
+    private boolean image = true;
+
+    public boolean toggleImage() {
+        if (!payload) {
+            return false;
+        }
+        image = !image;
+        return image;
     }
 
     public void mainLoop(Mode startMode) {
@@ -124,7 +135,7 @@ public abstract class CycleManager {
                     transmit[i] = null;
                 }
             } else {
-                transmit[i] = doPacket(String.format(transmitQueue.poll(), String.valueOf(i)), key);
+                transmit[i] = doPacket(transmitQueue.poll(), String.valueOf(i), key);
                 transmitted[i] = transmit[i];
             }
         }
@@ -133,9 +144,13 @@ public abstract class CycleManager {
                 transmit[i] = getTelemetry();
             }
             for (int i = 20; i < 89; i++) {
-                transmit[i] = getImagePacket();
+                if (image) {
+                    transmit[i] = getImagePacket();
+                } else {
+                    transmit[i] = null;
+                }
             }
-            transmit[89] = doPacket(String.format(TwoWayPacketGenerator.generateCommand(callSign, "TRA"), String.valueOf(89)), key);
+            transmit[89] = doPacket(TwoWayPacketGenerator.generateCommand(callSign, "TRA"), String.valueOf(89), key);
         }
         for (String pckt : transmit) {
             onSend(pckt);
@@ -143,8 +158,10 @@ public abstract class CycleManager {
         lora.send(transmit);
     }
 
-    private String doPacket(String packet, String key) {
-        return packet + "*" + CRC16CCITT.calcCsum((packet + key).getBytes()) + "\n";
+    private String doPacket(String packet, String id, String key) {
+        packet = packet.replace(">>","");
+        packet = packet.replaceFirst("%s",id);
+        return ">>" + packet + "*" + CRC16CCITT.calcCsum((packet + key).getBytes()) + "\n";
     }
 
     public String[] getTransmitted() {

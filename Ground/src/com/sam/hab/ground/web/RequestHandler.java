@@ -10,7 +10,7 @@ import java.nio.charset.StandardCharsets;
 
 public class RequestHandler {
 
-    String server = "http://192.168.250.172:80/";
+    String server = "http://212.250.101.219:8080/";
 
     public void sendTelemetry(String telem) {
         try {
@@ -40,6 +40,7 @@ public class RequestHandler {
             out.flush();
             out.close();
             connection.getInputStream();
+            System.out.println("Test");
         } catch (IOException e) {
             e.printStackTrace();
         }
