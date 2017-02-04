@@ -93,7 +93,6 @@ public abstract class CycleManager {
                 System.out.println("Unexpected IO exception while running main loop.");
                 System.out.println(lora);
             }
-
         }
     }
 
