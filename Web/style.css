@@ -1,0 +1,50 @@
+body {
+    margin:0;
+}
+.tablemain td {
+    display:block;
+    margin: 40px;
+    padding:10px;
+    padding-bottom:20px;
+    padding-top:20px;
+    border: 1px solid #eeeeee;
+    text-decoration: none;
+    text-align: center;
+    font-family: Arial;
+    font-size: 12px;
+    color: #666;
+}
+.tablemain a {
+    color: #00a3d3;
+    font-size: 20px;
+    text-decoration: none;
+}
+.tablemain td:hover {
+    background-color: #f1f1f1;
+}
+.content {
+    text-align: center;
+    width: 95%;
+    padding-top: 120px;
+    margin: auto;
+    background-color: #fcfcfc;
+}
+.nav {
+    font-weight:bold;
+    text-align:center;
+}
+.nav center {
+	position:fixed;
+	width:100%;
+	color:f2f2f2;
+	background-color:#00a3d3;
+	height:125px;
+}
+.nav h1 {
+    font-family: Arial;
+    margin-bottom: 0;
+}
+.nav h5 {
+    margin:10px;
+    font-family: Arial;
+}

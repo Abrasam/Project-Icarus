@@ -32,12 +32,19 @@ public class GroundMain {
             public void run() {
                 while (true) {
                     try {
-                        BufferedImage pic = ImageIO.read(new FileInputStream(new File("current.jpg")));
+                        BufferedImage pic = ImageIO.read(new FileInputStream(new File("images/current.jpg")));
                         if (pic != null) {
                             Image resized = pic.getScaledInstance(512, 384, 0);
                             gui.getImg().setIcon(new ImageIcon(resized));
                         }
                         Thread.sleep(1000);
+                        File imagesFolder = new File("images");
+                        File[] files = imagesFolder.listFiles();
+                        for (int i = 0; i < files.length; i++) {
+                            if (System.currentTimeMillis() - files[i].lastModified() > 1800000 && files[i].getName().matches("image_(.*).bin")) {
+                                files[i].delete();
+                            }
+                        }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

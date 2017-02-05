@@ -13,6 +13,6 @@ import java.util.zip.CRC32;
 public class Test {
 
     public static void main(String[] args) {
-        Set<Integer> set = new HashSet<Integer>();
+
     }
 }

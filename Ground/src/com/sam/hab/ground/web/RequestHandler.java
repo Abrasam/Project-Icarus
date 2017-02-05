@@ -40,7 +40,6 @@ public class RequestHandler {
             out.flush();
             out.close();
             connection.getInputStream();
-            System.out.println("Test");
         } catch (IOException e) {
             e.printStackTrace();
         }

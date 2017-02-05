@@ -146,7 +146,6 @@ public class PayloadMain {
                     output += line + "\n";
                     line = reader.readLine();
                 }
-                System.out.println(output);
                 int len = 255 - 14 - conf.getCallsign().length();
                 String[] toSend = new String[(int)Math.ceil(output.length() / (float)len)];
                 if (output.length() > len) {

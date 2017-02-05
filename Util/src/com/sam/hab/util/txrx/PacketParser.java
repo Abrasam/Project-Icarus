@@ -11,7 +11,6 @@ import java.util.concurrent.TimeUnit;
 public class PacketParser {
 
     public static ReceivedPacket parseTwoWay(String raw, String key) {
-        System.out.println(raw);
         String cSum = raw.split("\\*")[1].replace("\n", "");
         String packet = raw.split("\\*")[0].replace(">", "");;
         //packet = packet.replace(">", "");
@@ -33,7 +32,7 @@ public class PacketParser {
             return null;
         }
         String packetList[] = packet.split(",");
-        return new ReceivedTelemetry(raw, Float.valueOf(packetList[3]), Float.valueOf(packetList[4]), Float.valueOf(packetList[5]), Float.valueOf(packetList[1]));
+        return new ReceivedTelemetry(raw, Float.valueOf(packetList[3]), Float.valueOf(packetList[4]), Float.valueOf(packetList[5]), Long.valueOf(packetList[1]));
     }
 
     public static int[] parseSSDV(byte[] in) {
@@ -44,14 +43,17 @@ public class PacketParser {
         int packetNo = (0xFF & bytes[7]) * 256 + (0xFF & bytes[8]);
         //TODO: Log here that I've received a packet.
         FileOutputStream fos = null;
-        File file = new File("image_" + String.valueOf(imageNo) + ".bin");
+        File file = new File("images/image_" + String.valueOf(imageNo) + ".bin");
+        if (!file.getParentFile().exists()) {
+            file.getParentFile().mkdirs();
+        }
         Runtime rt = Runtime.getRuntime();
         try {
             file.createNewFile();
             fos = new FileOutputStream(file, true);
             fos.write(bytes);
             fos.close();
-            Process pr = rt.exec("./ssdv -d image_" + String.valueOf(imageNo) + ".bin current.jpg");
+            Process pr = rt.exec("./ssdv -d images/image_" + String.valueOf(imageNo) + ".bin images/current.jpg");
             pr.waitFor();
         } catch (FileNotFoundException e) {
             e.printStackTrace();

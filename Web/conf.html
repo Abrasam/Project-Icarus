@@ -1,0 +1,38 @@
+<html>
+<head>
+<title>Configure Payload</title>
+</head>
+<body style="font-family:Arial;">
+<form action="conf.php" method="post">
+Callsign:<br>
+<input type="text" name="callsign"><br>
+Frequency (MHz):<br>
+<input type="text" name="frequency"><br>
+Bandwidth:<br>
+<input type="radio" name="bandwidth" value="500">500KHz
+<input type="radio" name="bandwidth" value="250" checked>250KHz
+<input type="radio" name="bandwidth" value="125">125KHz
+<input type="radio" name="bandwidth" value="62.5">62.5KHz
+<input type="radio" name="bandwidth" value="41.7">41.7KHz
+<input type="radio" name="bandwidth" value="31.25">31.25KHz
+<input type="radio" name="bandwidth" value="20.8">20.8KHz
+<input type="radio" name="bandwidth" value="15.6">15.6KHz
+<input type="radio" name="bandwidth" value="10.4">10.4KHz
+<input type="radio" name="bandwidth" value="7.8">7.8KHz
+<br>
+Spreading Factor (6-12):<br>
+<input type="text" name="spreading"><br>
+Error Coding Rate:<br>
+<input type="radio" name="coding" value="5" checked>4/5
+<input type="radio" name="coding" value="6">4/6
+<input type="radio" name="coding" value="7">4/7
+<input type="radio" name="coding" value="8">4/8
+<br>
+Explicit Header Mode:<br>
+<input type="radio" name="header" value="1" checked>Yes
+<input type="radio" name="header" value="0">No
+<br>
+<input type="submit" value = "Save">
+</form>
+</body>
+</html>

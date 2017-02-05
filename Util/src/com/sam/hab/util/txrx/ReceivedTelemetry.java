@@ -9,9 +9,9 @@ public class ReceivedTelemetry {
     public final float lat;
     public final float lon;
     public final float alt;
-    public final float id;
+    public final long id;
 
-    public ReceivedTelemetry(String raw, float lat, float lon, float alt, float id) {
+    public ReceivedTelemetry(String raw, float lat, float lon, float alt, long id) {
         this.raw = raw;
         this.lat = lat;
         this.lon = lon;

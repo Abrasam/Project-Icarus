@@ -47,7 +47,6 @@ public abstract class CycleManager {
     }
 
     public void addToTx(String payload) {
-        System.out.println(payload);
         transmitQueue.add(payload);
     }
 

@@ -12,9 +12,14 @@ import javax.swing.text.DefaultCaret;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 public class GUI {
     private JTabbedPane tabbedPane1;
@@ -24,9 +29,7 @@ public class GUI {
     private JTextField lon;
     private JTextField alt;
     private JTextField lastpckt;
-    private JTextField recvrs;
     private JTextField velv;
-    private JTextField velh;
     private JLabel img;
     private JPanel ssdvPanel;
     private JPanel panelMain;
@@ -36,10 +39,27 @@ public class GUI {
     private JTextArea controlResults;
     private JButton fullDownload;
     private JButton noPicsStored;
+    private JTextField timeSince;
 
     public final CycleManager cm;
+    private final File log;
+
+    float lastAlt = 0;
+    long lastTime = System.currentTimeMillis();
+    long lastID = -1;
+
 
     public GUI(Config conf) {
+
+        log = new File("logs/" + new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date()) + ".txt");
+        try {
+            if (!log.getParentFile().exists()) {
+                log.getParentFile().mkdirs();
+            }
+            log.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         rebootButton.addActionListener(new ActionListener() {
             @Override
@@ -76,8 +96,6 @@ public class GUI {
             }
         });
 
-        Calendar cal = Calendar.getInstance();
-
         RequestHandler requestHandler = new RequestHandler();
 
         cm = new CycleManager(false, conf.getCallsign(), new double[] {conf.getFreq(), conf.getListen()}, conf.getBandwidth(), conf.getSf(), conf.getCodingRate(), !conf.getImplicit(), conf.getKey()) {
@@ -89,10 +107,13 @@ public class GUI {
                 getAlt().setText(String.valueOf(telem.alt));
                 getLat().setText(String.valueOf(telem.lat));
                 getLon().setText(String.valueOf(telem.lon));
-                getLastpckt().setText(cal.getTime().toString());
                 writeRx(telem.raw);
-                System.out.println("KITTENS");
-                requestHandler.sendTelemetry(telem.raw);
+                if (telem.id != lastID) {
+                    getLastpckt().setText(new SimpleDateFormat("HH:mm:ss").format(new Date()));
+                    updateVelocities(telem.alt);
+                    lastID = telem.id;
+                    requestHandler.sendTelemetry(telem.raw);
+                }
             }
 
             @Override
@@ -157,16 +178,39 @@ public class GUI {
                 return null;
             }
         };
+
+        new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                while (true) {
+                    long diff = System.currentTimeMillis() - lastTime;
+                    diff /= 1000f;
+                    timeSince.setText(diff + "s");
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }).start();
     }
     
     public void init() {
         rxcon.setLineWrap(true);
         txcon.setLineWrap(true);
         consoleOutput.setLineWrap(true);
-        consoleOutput.setFont(new Font("monospaced", Font.PLAIN, 12));
+        controlResults.setLineWrap(true);
         ((DefaultCaret)rxcon.getCaret()).setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
         ((DefaultCaret)txcon.getCaret()).setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
         ((DefaultCaret)consoleOutput.getCaret()).setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+        ((DefaultCaret)controlResults.getCaret()).setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+        consoleOutput.setFont(new Font("monospaced", Font.PLAIN, 12));
+        consoleInput.setFont(new Font("monospaced", Font.PLAIN, 12));
+        controlResults.setFont(new Font("monospaced", Font.PLAIN, 12));
+        rxcon.setFont(new Font("monospaced", Font.PLAIN, 12));
+        txcon.setFont(new Font("monospaced", Font.PLAIN, 12));
     }
 
     public JTextArea getControlResults() {
@@ -177,20 +221,8 @@ public class GUI {
         return img;
     }
 
-    public JTabbedPane getTabbedPane1() {
-        return tabbedPane1;
-    }
-
     public JPanel getPanelMain() {
         return panelMain;
-    }
-
-    public JTextArea getRxcon() {
-        return rxcon;
-    }
-
-    public JTextArea getTxcon() {
-        return txcon;
     }
 
     public JTextField getLat() {
@@ -209,36 +241,52 @@ public class GUI {
         return lastpckt;
     }
 
-    public JTextField getRecvrs() {
-        return recvrs;
-    }
-
-    public JTextField getVelv() {
-        return velv;
-    }
-
-    public JTextField getVelh() {
-        return velh;
-    }
-
     public JPanel getSsdvPanel() {
 
         return ssdvPanel;
     }
 
     public void writeRx(String write) {
+        write = write.replace((char)0, '\n');
         rxcon.append("->: " + write);
+        try {
+            FileWriter writer = new FileWriter(log, true);
+            DateFormat format = new SimpleDateFormat("HH:mm:ss");
+            writer.write("RX [" + format.format(new Date()) +"]: " + write);
+            writer.flush();
+            writer.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void writeTx(String write) {
+        write = write.replace((char)0, '\n');
         txcon.append("<-:" + write);
+        try {
+            FileWriter writer = new FileWriter(log, true);
+            DateFormat format = new SimpleDateFormat("HH:mm:ss");
+            writer.write("TX [" + format.format(new Date()) +"]: " + write);
+            writer.flush();
+            writer.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public JTextArea getConsoleOutput() {
         return consoleOutput;
     }
 
-    public JTextField getConsoleInput() {
-        return consoleInput;
+    private void updateVelocities(float alt) {
+        float altSpeed = (alt - lastAlt)/((System.currentTimeMillis() - lastTime)/1000f);
+        altSpeed = (int)(altSpeed * 10) / 10f;
+        velv.setText(String.valueOf(altSpeed) + " m/s");
+        lastTime = System.currentTimeMillis();
+        lastAlt = alt;
     }
 }
