@@ -46,10 +46,18 @@ public abstract class CycleManager {
         packetThread.start();
     }
 
+    /**
+     * Add a packet to the transmit queue.
+     * @param payload Packet to add, must be a string using only ISO 8859-1 characters.
+     */
     public void addToTx(String payload) {
         transmitQueue.add(payload);
     }
 
+    /**
+     * Get the next packet from the received packet queue.
+     * @return The packet, or null if there are none.
+     */
     public String getNextReceived() {
         if (receiveQueue.size() > 0) {
             return receiveQueue.poll();
@@ -57,14 +65,22 @@ public abstract class CycleManager {
         return null;
     }
 
+    //Flag to determine when to transmit.
     private boolean transmit = false;
 
+    /**
+     * Sets the transmit flag to true so that the mainloop switches to transmit mode on the next iteration, this is only actually used on the ground station.
+     */
     public void txInterrupt() {
         transmit = true;
     }
 
+    //Sets whether to transmit images, used only by the payload (obviously!) when the ground station has requested an image transmission toggle.
     private boolean image = true;
 
+    /**
+     * Toggles image transmission for the payload.
+     */
     public boolean toggleImage() {
         if (!payload) {
             return false;
@@ -73,6 +89,11 @@ public abstract class CycleManager {
         return image;
     }
 
+    /**
+     * This is the main loop for the program, switches between transmit mode and receive mode as necessary.
+     * The payload switches between transmit and receive in fixed intervals, the ground station is always receiving unless instructed otherwise by the ground payload.
+     * @param startMode
+     */
     public void mainLoop(Mode startMode) {
         Mode newMode = startMode;
         while (true) {
@@ -95,6 +116,11 @@ public abstract class CycleManager {
         }
     }
 
+    /**
+     * This method will receive packets until the transmit flag goes true or it times out, there is a small timeout so that we do not have significant downtime not transmitting.
+     * Received packets are stored in the received packet queue using the addToRx() method.
+     * @throws IOException
+     */
     private void receive() throws IOException {
         lora.setMode(Mode.STDBY);
         lora.setFrequency(freq[1]);
@@ -120,6 +146,14 @@ public abstract class CycleManager {
         }
     }
 
+    /**
+     * Acquires the next set of packets to transmit and sends them to the LoRa radio to transmit.
+     * If this is the payload it will transmit 10 2-way packets (if available, if not available these will just be telemetry),
+     * then 10 telemetry then if image transmission is enabled it will transmit 70 image packets.
+     * If this is the ground station it will transmit up to 10 2-way packets, however, once all 2-way packets are transmitted
+     * it'll just stop so as to return to telemetry and image sending by the payload quickly..
+     * @throws IOException
+     */
     private void transmit() throws IOException {
         transmit = false;
         lora.setMode(Mode.STDBY);
@@ -156,6 +190,13 @@ public abstract class CycleManager {
         lora.send(transmit);
     }
 
+    /**
+     * This method takes a 2-way packet and configures it for sending by substituting its ID into place and then appending the checksum.
+     * @param packet The packet to prepare, this is a string.
+     * @param id The id of the packet.
+     * @param key The encryption key set by user in config.
+     * @return The prepared packet with the checksum and id substituted in.
+     */
     private String doPacket(String packet, String id, String key) {
         packet = packet.replace(">>","");
         packet = packet.replaceFirst("%s",id);
@@ -166,9 +207,18 @@ public abstract class CycleManager {
         return transmitted;
     }
 
+    /**
+     * Adds the given payload to the received queue.
+     * @param payload Payload to add to the queue.
+     */
     public void addToRx(byte[] payload) {
         receiveQueue.add(new String(payload, StandardCharsets.ISO_8859_1));
     }
+
+    /**
+     * Below are several abstract methods which are used to allow this class to be polymorphic. These methods are implemented differently on the payload and the ground station.
+     * For example, the payload does not need to be able to handle received telemetry or image packets, and the ground station doesn't need to be able to generate telemetry or image packets.
+     */
 
     public abstract void handleTelemetry(ReceivedTelemetry telem);
 

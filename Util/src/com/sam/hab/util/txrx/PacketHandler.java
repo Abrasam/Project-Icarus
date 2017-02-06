@@ -23,14 +23,10 @@ public class PacketHandler implements Runnable {
                         if (packet.charAt(0) == '>') {
                             ReceivedPacket pckt = PacketParser.parseTwoWay(packet, cm.key);
                             cm.handleTwoWay(pckt);
-
-                            //Logic to upload and log goes here.
-
                         } else if (packet.charAt(0) == '$') {
                             ReceivedTelemetry telem = PacketParser.parseTelemetry(packet);
                             if (telem != null) {
                                 cm.handleTelemetry(telem);
-                                //Logic to upload to server goes here.
                             }
                         } else {
                             int[] res = PacketParser.parseSSDV(bytes);

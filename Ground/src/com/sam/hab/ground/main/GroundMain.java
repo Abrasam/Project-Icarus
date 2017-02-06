@@ -15,8 +15,10 @@ public class GroundMain {
 
     public static void main(String[] args) throws InterruptedException {
 
+        //Load configuration from config.yml (or create new if none exists).
         final Config conf = new Config();
 
+        //Window setup.
         JFrame frame = new JFrame("Prototype 2-Way HAB Comms");
         GUI gui = new GUI(conf);
         gui.init();
@@ -27,6 +29,7 @@ public class GroundMain {
         frame.pack();
         frame.setVisible(true);
 
+        //This thread continuously updates the image being displayed on the SSDV tab so that we always have the latest image, it also deletes old images (>30minutes old).
         Thread imageThread = new Thread(new Runnable() {
             @Override
             public void run() {

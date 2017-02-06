@@ -10,6 +10,12 @@ import java.util.concurrent.TimeUnit;
 
 public class PacketParser {
 
+    /**
+     * Simple algorithm to parse a two way packet, will first check the checksum is valid and that the correct key has been used then it will then return a new ReceivedPacket object with this packet's data.
+     * @param raw The string of the packet received from the radio.
+     * @param key The encryption key, set in config.
+     * @return The ReceivedPacket object for this packet. Or null if the packet failed the checksum/key test.
+     */
     public static ReceivedPacket parseTwoWay(String raw, String key) {
         String cSum = raw.split("\\*")[1].replace("\n", "");
         String packet = raw.split("\\*")[0].replace(">", "");;
@@ -25,6 +31,11 @@ public class PacketParser {
         return new ReceivedPacket(raw, packetList[3], Integer.valueOf(packetList[1]), packetType);
     }
 
+    /**
+     * Parses telemetry by splitting by comma, this works for the standard UKHAS format setup as $$CALLSIGN,ID,HH:MM:SS,LAT,LON,SATS*CSUM\n only.
+     * @param raw The string of the telemetry taken from the radio.
+     * @return The ReceivedTelemetry object for this telemetry string, this will then be sent to the server and the display.
+     */
     public static ReceivedTelemetry parseTelemetry(String raw) {
         String cSum = raw.split("\\*")[1].replace("\n", "");
         String packet = raw.split("\\*")[0].replace("$", "");
@@ -35,6 +46,12 @@ public class PacketParser {
         return new ReceivedTelemetry(raw, Float.valueOf(packetList[3]), Float.valueOf(packetList[4]), Float.valueOf(packetList[5]), Long.valueOf(packetList[1]));
     }
 
+    /**
+     * This parses SSDV data, it first stores the bytes received in the appropriate image file, the image number is the 7th byte in the array of each packet.
+     * The ssdv program by fsphil is then run to decode the SSDV into a jpg image.
+     * @param in The bytes of one SSDV packet.
+     * @return The image number (i.e. 7th item in the input array) and the packet ID, also derived from the packet data.
+     */
     public static int[] parseSSDV(byte[] in) {
         byte[] bytes = new byte[in.length+1];
         bytes[0] = 0x55;
