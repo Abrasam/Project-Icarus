@@ -5,6 +5,9 @@ package com.sam.hab.util.lora;
  */
 public class Constants {
 
+    /**
+     * Registers stored with their memory address.
+     */
     public enum Register {
         FIFO(0x00),
         OPMODE(0x01),
@@ -26,16 +29,23 @@ public class Constants {
 
         public final byte addr;
 
-        private Register(int addr) {
+        Register(int addr) {
             this.addr = (byte) addr;
         }
     }
 
+    /**
+     * Whether the DIO0 pin is configured to go HIGH (1) on TXDONE or RXDONE.
+     */
     public enum DIOMode {
         TXDONE,
         RXDONE;
     }
 
+    /**
+     * The available modes and the value that the RegOpMode register needs to be set to to set the radio to this mode.
+     * Node, not all modes are here, some are not used in my program so were not included, it would be trivial to add them of course.
+     */
     public enum Mode {
         SLEEP(0x80),
         STDBY(0x81),
@@ -44,7 +54,7 @@ public class Constants {
 
         public final byte val;
 
-        private Mode(int val) {
+        Mode(int val) {
             this.val = (byte) val;
         }
 
@@ -59,6 +69,9 @@ public class Constants {
 
     }
 
+    /**
+     * All the available bandwidths that the radio can be set to along with the value that must be sent to the radio to enable this bandwidth.
+     */
     public enum Bandwidth {
         BW7_8(0),
         BW10_4(1),
@@ -73,7 +86,7 @@ public class Constants {
 
         public final byte val;
 
-        private Bandwidth(int val) {
+        Bandwidth(int val) {
             this.val = (byte)val;
         }
 
@@ -130,6 +143,9 @@ public class Constants {
         }
     }
 
+    /**
+     * The error coding rate of the transmitted packet.
+     */
     public enum CodingRate {
         CR4_5(1),
         CR4_6(2),
@@ -138,11 +154,14 @@ public class Constants {
 
         public final byte val;
 
-        private CodingRate(int val) {
+        CodingRate(int val) {
             this.val = (byte)val;
         }
     }
 
+    /**
+     * The available types of packet that can be sent/received using my 2-way packet protocol.
+     */
     public enum PacketType {
         CMD(0),
         SHELL(1),
@@ -153,7 +172,7 @@ public class Constants {
 
         public final int id;
 
-        private PacketType(int id) {
+        PacketType(int id) {
             this.id = id;
         }
 

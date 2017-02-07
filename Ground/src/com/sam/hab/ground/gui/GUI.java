@@ -17,9 +17,7 @@ import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
 
 public class GUI {
     private JTabbedPane tabbedPane1;
@@ -37,7 +35,7 @@ public class GUI {
     private JTextField consoleInput;
     private JButton rebootButton;
     private JTextArea controlResults;
-    private JButton fullDownload;
+    private JButton imageTransmit;
     private JButton noPicsStored;
     private JTextField timeSince;
 
@@ -51,6 +49,7 @@ public class GUI {
 
     public GUI(Config conf) {
 
+        //Prepare log file. This is timestamped so each launch has a new log file.
         log = new File("logs/" + new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date()) + ".txt");
         try {
             if (!log.getParentFile().exists()) {
@@ -61,6 +60,7 @@ public class GUI {
             e.printStackTrace();
         }
 
+        //Prepare the reboot button so it completes the correct action.
         rebootButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -68,6 +68,7 @@ public class GUI {
             }
         });
 
+        //Prepares the consoleInput so that when enter is pressed it sends the given command.
         consoleInput.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -82,13 +83,15 @@ public class GUI {
             }
         });
 
-        fullDownload.addActionListener(new ActionListener() {
+        //Prepares the image transmit toggle button so when clicked it prepares a packet to send which toggles image transmission.
+        imageTransmit.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 cm.addToTx(TwoWayPacketGenerator.generateCommand(conf.getCallsign(), "IMG"));
             }
         });
 
+        //Prepares this button so when clicked it prepares a packet which will ask the payload to transmit the number of stored images.
         noPicsStored.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -96,8 +99,10 @@ public class GUI {
             }
         });
 
+        //Init request handler.
         RequestHandler requestHandler = new RequestHandler();
 
+        //Init cycle manager.
         cm = new CycleManager(false, conf.getCallsign(), new double[] {conf.getFreq(), conf.getListen()}, conf.getBandwidth(), conf.getSf(), conf.getCodingRate(), !conf.getImplicit(), conf.getKey()) {
             @Override
             public void handleTelemetry(ReceivedTelemetry telem) {
@@ -196,7 +201,8 @@ public class GUI {
             }
         }).start();
     }
-    
+
+    //Simple sets all the GUI elements to be formatted correctly.
     public void init() {
         rxcon.setLineWrap(true);
         txcon.setLineWrap(true);
@@ -246,6 +252,10 @@ public class GUI {
         return ssdvPanel;
     }
 
+    /**
+     * Simple method which writes the received given data to the UI and the log file.
+     * @param write string to write.
+     */
     public void writeRx(String write) {
         write = write.replace((char)0, '\n');
         rxcon.append("->: " + write);
@@ -262,6 +272,10 @@ public class GUI {
         }
     }
 
+    /**
+     * Simple method which writes the transmitted given data to the UI and the log file.
+     * @param write string to write.
+     */
     public void writeTx(String write) {
         write = write.replace((char)0, '\n');
         txcon.append("<-:" + write);
@@ -282,6 +296,10 @@ public class GUI {
         return consoleOutput;
     }
 
+    /**
+     * Updates the vertical velocity field. This is an estimate only.
+     * @param alt new altitude.
+     */
     private void updateVelocities(float alt) {
         float altSpeed = (alt - lastAlt)/((System.currentTimeMillis() - lastTime)/1000f);
         altSpeed = (int)(altSpeed * 10) / 10f;

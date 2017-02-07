@@ -23,6 +23,10 @@ public class PayloadMain {
     private static CycleManager cm;
     private static ImageManager im;
 
+    /**
+     * Takes a GPS GGA string and generates a telemetry string using it, then stores this in the static variable currentTelemetry.
+     * @param gps the GGA string.
+     */
     public static void generateTelemetry(String gps) {
         if (gps.startsWith("$GNGGA"))
         {
@@ -108,6 +112,10 @@ public class PayloadMain {
         cm.mainLoop(Constants.Mode.TX);
     }
 
+    /**
+     * Takes a received command packet and determines what action is to be taken, then takes that action.
+     * @param packet The packet to analyse.
+     */
     public static void handleCommand(ReceivedPacket packet) {
         switch(packet.data) {
             case "RBT":
@@ -133,6 +141,10 @@ public class PayloadMain {
         }
     }
 
+    /**
+     * Takes a shell packet and executes the given command, storing the result and preparing it for sending, adds that result to the transmit queue.
+     * @param packet the packet to analyse.
+     */
     public static void handleShell(ReceivedPacket packet) {
         Runtime rt = Runtime.getRuntime();
         try {

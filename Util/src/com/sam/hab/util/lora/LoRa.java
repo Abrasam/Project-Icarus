@@ -28,11 +28,11 @@ public class LoRa {
     /**
      * Constructor for the LoRa interface class. Parameters are the modem settings for the radio.
      * This encapsulated class contains all the advanced LoRa register modification functionality, providing me, as the developer, with a simpler interface elsewhere in the program.
-     * @param frequency
-     * @param bandwidth
-     * @param spreadingFactor
-     * @param codingRate
-     * @param explicitHeader
+     * @param frequency frequency to set the radio to.
+     * @param bandwidth bandwidth  to set the radio to.
+     * @param spreadingFactor sf to set the radio to.
+     * @param codingRate cr to set the radio to.
+     * @param explicitHeader whether or not to use explicit headers (please use explicit headers!).
      */
     public LoRa(double frequency, Bandwidth bandwidth, short spreadingFactor, CodingRate codingRate, boolean explicitHeader) throws IOException {
         this.frequency = frequency;
@@ -214,7 +214,7 @@ public class LoRa {
 
     /**
      * Read a received payload from the radio.
-     * @return
+     * @return the payload.
      * @throws IOException
      */
     public byte[] readPayload() throws IOException {
@@ -290,8 +290,8 @@ public class LoRa {
     }
 
     /**
-     * Set the radio to begin transmission of 10 strings.
-     * @param transmitList
+     * Set the radio to begin transmission of some packets.
+     * @param transmitList array of packets to transmit.
      * @throws IOException
      */
     public void send(String[] transmitList) throws IOException {

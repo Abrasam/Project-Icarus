@@ -7,6 +7,10 @@ public class PacketHandler implements Runnable {
 
     private final CycleManager cm;
 
+    /**
+     * This is a simple loop which gets the latest packet from the received queue, determines its type and then calls the relevant parse and handle methods.
+     * @param cm The cycle manager currently in use, needed in order to get latest received packet.
+     */
     public PacketHandler(CycleManager cm) {
         this.cm = cm;
     }

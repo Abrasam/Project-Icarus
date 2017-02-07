@@ -16,6 +16,11 @@ public class ImageManager {
     private String latestImage = "";
     private boolean fullDownload = false;
 
+    /**
+     * This class creates a thread which loops continuously taking a picture every 30 seconds or so (the inaccuracy is because the time taken to execute the commands is variable, particularly convert).
+     * It also provides the means by which to get SSDV encoded image data in 256 byte packets.
+     * @param callsign The payload callsign, this is used when encoding SSDV images.
+     */
     public ImageManager(String callsign) {
         new Thread(new Runnable() {
             @Override
@@ -26,16 +31,11 @@ public class ImageManager {
                 try {
                     rt.exec("mkdir images").waitFor();
                     while (true) {
-                        if (fullDownload) {
-                            rt.exec("./ssdv -e -c " + "CALLSIGN" + " -i " + String.valueOf(count) + " " + latestImage + " out.bin");
-                            fullDownload = false;
-                        } else {
-                            String name = String.valueOf(System.currentTimeMillis() / 1000) + ".jpg";
-                            rt.exec("raspistill -o images/" + name).waitFor();
-                            rt.exec("convert images/" + name + " -resize 768x576! tmp.jpg").waitFor();
-                            rt.exec("./ssdv -e -c " + callsign + " -i " + String.valueOf(count) + " tmp.jpg out.bin").waitFor();
-                            latestImage = name;
-                        }
+                        String name = String.valueOf(System.currentTimeMillis() / 1000) + ".jpg";
+                        rt.exec("raspistill -o images/" + name).waitFor();
+                        rt.exec("convert images/" + name + " -resize 768x576! tmp.jpg").waitFor();
+                        rt.exec("./ssdv -e -c " + callsign + " -i " + String.valueOf(count) + " tmp.jpg out.bin").waitFor();
+                        latestImage = name;
                         count++;
                         Thread.sleep(30000);
                     }
@@ -48,10 +48,10 @@ public class ImageManager {
         }).start();
     }
 
-    public void fullDownload() {
-        this.fullDownload = true;
-    }
-
+    /**
+     * Returns the next image packet that is ready to be sent by the payload.
+     * @return A 256 byte array which equates to one packet.
+     */
     public byte[] getImagePacket() {
         if (imageQueue.size() <= 1) {
             try {
