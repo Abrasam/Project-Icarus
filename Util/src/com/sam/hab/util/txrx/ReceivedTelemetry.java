@@ -1,8 +1,5 @@
 package com.sam.hab.util.txrx;
 
-/**
- * Created by sam on 23/11/16.
- */
 public class ReceivedTelemetry {
 
     public final String raw;

@@ -74,6 +74,7 @@ public class GPSLoop implements Runnable {
                     char c = (char)(0xFF & this.serial.read(1)[0]);
                     received = received + c;
                     if (c == '\n') {
+                        System.out.println(received);
                         PayloadMain.generateTelemetry(received);
                         this.serial.discardOutput();
                         received = "";
