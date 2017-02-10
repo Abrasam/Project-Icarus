@@ -1,6 +1,5 @@
 package com.sam.hab.util.txrx;
 
-
 public class TwoWayPacketGenerator {
 
     /**
