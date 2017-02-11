@@ -207,6 +207,7 @@ public class LoRa {
      * @throws IOException
      */
     public void setPAConfig(short outputPower) throws IOException {
+        //MSB is a 1 to set the PA_BOOST pin to HIGH. The 4 LSBs are the output power value.
         byte val = (byte)0b10000000;
         val |= outputPower;
         writeRegister(Register.PACONFIG, val);
