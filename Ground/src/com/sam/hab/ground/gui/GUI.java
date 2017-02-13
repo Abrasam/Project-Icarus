@@ -2,6 +2,7 @@ package com.sam.hab.ground.gui;
 
 import com.sam.hab.ground.web.RequestHandler;
 import com.sam.hab.util.lora.Config;
+import com.sam.hab.util.lora.Constants;
 import com.sam.hab.util.txrx.CycleManager;
 import com.sam.hab.util.txrx.ReceivedPacket;
 import com.sam.hab.util.txrx.ReceivedTelemetry;
@@ -103,7 +104,7 @@ public class GUI {
         RequestHandler requestHandler = new RequestHandler();
 
         //Init cycle manager.
-        cm = new CycleManager(false, conf.getCallsign(), new double[] {conf.getFreq(), conf.getListen()}, conf.getBandwidth(), conf.getSf(), conf.getCodingRate(), !conf.getImplicit(), conf.getKey()) {
+        cm = new CycleManager(false, conf.getCallsign(), new double[] {conf.getFreq(), conf.getListen()}, new Constants.Bandwidth[] {conf.getTransmitBandwidth(), conf.getReceiveBandwidth()}, conf.getSf(), conf.getCodingRate(), !conf.getImplicit(), conf.getKey()) {
             @Override
             public void handleTelemetry(ReceivedTelemetry telem) {
                 if (telem == null) {

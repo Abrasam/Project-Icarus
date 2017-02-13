@@ -62,7 +62,7 @@ public class PayloadMain {
                 e.printStackTrace();
             }
         }
-        cm = new CycleManager(true, conf.getCallsign(), new double[] {conf.getFreq(), conf.getListen()}, conf.getBandwidth(), conf.getSf(), conf.getCodingRate(), !conf.getImplicit(), conf.getKey()) {
+        cm = new CycleManager(true, conf.getCallsign(), new double[] {conf.getFreq(), conf.getListen()}, new Constants.Bandwidth[] {conf.getTransmitBandwidth(), conf.getReceiveBandwidth()}, conf.getSf(), conf.getCodingRate(), !conf.getImplicit(), conf.getKey()) {
             @Override
             public void handleTelemetry(ReceivedTelemetry telem) {
                 return;

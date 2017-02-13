@@ -26,17 +26,25 @@ public abstract class CycleManager {
     private final LoRa lora;
 
     private final double[] freq;
+    private final Bandwidth[] bandwidth;
+    private final short sf;
+    private final CodingRate codingRate;
+    private final boolean explicit;
 
     protected final String callSign;
     protected final String key;
 
-    public CycleManager(boolean payload, String callSign, double[] frequency, Bandwidth bandwidth, short sf, CodingRate codingRate, boolean explicit, String key) { //frequency array, the 0 index is for transmit, the 1 index is for receive.
+    public CycleManager(boolean payload, String callSign, double[] frequency, Bandwidth[] bandwidth, short sf, CodingRate codingRate, boolean explicit, String key) { //frequency array, the 0 index is for transmit, the 1 index is for receive.
         this.payload = payload;
         this.freq = frequency;
+        this.bandwidth = bandwidth;
+        this.sf = sf;
+        this.codingRate = codingRate;
+        this.explicit = explicit;
         this.callSign = callSign;
         this.key = key;
         try {
-            lora = new LoRa(freq[0], bandwidth, sf, codingRate, explicit);
+            lora = new LoRa(freq[0], bandwidth[0], sf, codingRate, explicit);
             lora.setPAConfig((short)(payload ? 0x08 : 0b00001111));
         } catch (IOException e) {
             throw new RuntimeException("LoRa module contact not established, check your wiring perhaps?");
@@ -124,6 +132,7 @@ public abstract class CycleManager {
     private void receive() throws IOException {
         lora.setMode(Mode.STDBY);
         lora.setFrequency(freq[1]);
+        lora.setModemConfig(bandwidth[1], sf, codingRate, explicit);
         lora.setDIOMapping(DIOMode.RXDONE);
         lora.setMode(Mode.RX);
         long timeout = System.currentTimeMillis() + 10000;
@@ -158,6 +167,7 @@ public abstract class CycleManager {
         transmit = false;
         lora.setMode(Mode.STDBY);
         lora.setFrequency(freq[0]);
+        lora.setModemConfig(bandwidth[0], sf, codingRate, explicit);
         String[] transmit = new String[(payload ? 90 : 10)];
         for (int i = 0; i < 10; i++) {
             if (transmitQueue.size() <= 0) {

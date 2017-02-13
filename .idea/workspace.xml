@@ -26,14 +26,37 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="GroundMain.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Ground/src/com/sam/hab/ground/main/GroundMain.java">
+      <file leaf-file-name="PayloadMain.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Payload/src/com/sam/hab/payload/main/PayloadMain.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="850">
-              <caret line="59" column="22" lean-forward="false" selection-start-line="59" selection-start-column="22" selection-end-line="59" selection-end-column="22" />
+            <state relative-caret-position="410">
+              <caret line="64" column="157" lean-forward="false" selection-start-line="64" selection-start-column="137" selection-end-line="64" selection-end-column="157" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Config.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Util/src/com/sam/hab/util/lora/Config.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="356">
+              <caret line="31" column="118" lean-forward="false" selection-start-line="31" selection-start-column="118" selection-end-line="31" selection-end-column="118" />
               <folding>
-                <element signature="imports" expanded="true" />
+                <element signature="e#3124#3125#0" expanded="true" />
+                <element signature="e#3158#3159#0" expanded="true" />
+                <element signature="e#3205#3206#0" expanded="true" />
+                <element signature="e#3239#3240#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Constants.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Util/src/com/sam/hab/util/lora/Constants.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="781">
+              <caret line="159" column="5" lean-forward="true" selection-start-line="159" selection-start-column="5" selection-end-line="159" selection-end-column="5" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -41,7 +64,7 @@
       <file leaf-file-name="RequestHandler.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Ground/src/com/sam/hab/ground/web/RequestHandler.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1122">
+            <state relative-caret-position="832">
               <caret line="72" column="1" lean-forward="false" selection-start-line="72" selection-start-column="1" selection-end-line="72" selection-end-column="1" />
               <folding />
             </state>
@@ -58,21 +81,33 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="CycleManager.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Util/src/com/sam/hab/util/txrx/CycleManager.java">
+      <file leaf-file-name="GroundMain.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Ground/src/com/sam/hab/ground/main/GroundMain.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="510">
-              <caret line="39" column="67" lean-forward="true" selection-start-line="39" selection-start-column="67" selection-end-line="39" selection-end-column="67" />
+            <state relative-caret-position="170">
+              <caret line="22" column="10" lean-forward="false" selection-start-line="22" selection-start-column="10" selection-end-line="22" selection-end-column="10" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="GUI.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Ground/src/com/sam/hab/ground/gui/GUI.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="374">
+              <caret line="106" column="186" lean-forward="false" selection-start-line="106" selection-start-column="167" selection-end-line="106" selection-end-column="186" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="LoRa.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/Util/src/com/sam/hab/util/lora/LoRa.java">
+      <file leaf-file-name="CycleManager.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/Util/src/com/sam/hab/util/txrx/CycleManager.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="305">
-              <caret line="209" column="92" lean-forward="false" selection-start-line="209" selection-start-column="92" selection-end-line="209" selection-end-column="92" />
+            <state relative-caret-position="612">
+              <caret line="169" column="39" lean-forward="false" selection-start-line="169" selection-start-column="39" selection-end-line="169" selection-end-column="39" />
               <folding />
             </state>
           </provider>
@@ -89,8 +124,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>writePayload</find>
-      <find>writePayload(</find>
       <find>255-</find>
       <find>addToTx</find>
       <find>new String</find>
@@ -119,6 +152,8 @@
       <find>System.out.println</find>
       <find>resize</find>
       <find>setPA</find>
+      <find>setFre</find>
+      <find>setFreq</find>
     </findStrings>
     <replaceStrings>
       <replace>return</replace>
@@ -152,16 +187,12 @@
         <option value="$PROJECT_DIR$/Util/src/com/sam/hab/util/rtty/RTTYManager.java" />
         <option value="$PROJECT_DIR$/Util/src/com/sam/hab/util/txrx/ReceivedPacket.java" />
         <option value="$PROJECT_DIR$/Ground/src/com/sam/hab/ground/gui/GUI.form" />
-        <option value="$PROJECT_DIR$/Ground/src/com/sam/hab/ground/gui/GUI.java" />
         <option value="$PROJECT_DIR$/Util/src/com/sam/hab/util/txrx/TwoWayPacketGenerator.java" />
         <option value="$PROJECT_DIR$/Util/src/com/sam/hab/util/lora/Constants.java" />
-        <option value="$PROJECT_DIR$/Util/src/com/sam/hab/util/lora/Config.java" />
         <option value="$PROJECT_DIR$/Util/src/com/sam/hab/util/txrx/ReceivedTelemetry.java" />
         <option value="$PROJECT_DIR$/Util/src/com/sam/hab/util/txrx/PacketParser.java" />
         <option value="$PROJECT_DIR$/Util/src/com/sam/hab/util/txrx/PacketHandler.java" />
-        <option value="$PROJECT_DIR$/Util/src/com/sam/hab/util/txrx/CycleManager.java" />
         <option value="$PROJECT_DIR$/Util/src/com/sam/hab/util/csum/CRC16CCITT.java" />
-        <option value="$PROJECT_DIR$/Payload/src/com/sam/hab/payload/main/PayloadMain.java" />
         <option value="$PROJECT_DIR$/Payload/src/com/sam/hab/payload/main/ImageManager.java" />
         <option value="$PROJECT_DIR$/Ground/src/com/sam/hab/ground/main/GroundMain.java" />
         <option value="$PROJECT_DIR$/Payload/src/Test.java" />
@@ -169,6 +200,10 @@
         <option value="$PROJECT_DIR$/Ground/src/com/sam/hab/ground/web/RequestHandler.java" />
         <option value="$PROJECT_DIR$/Payload/src/com/sam/hab/payload/serial/GPSLoop.java" />
         <option value="$PROJECT_DIR$/Util/src/com/sam/hab/util/lora/LoRa.java" />
+        <option value="$PROJECT_DIR$/Payload/src/com/sam/hab/payload/main/PayloadMain.java" />
+        <option value="$PROJECT_DIR$/Ground/src/com/sam/hab/ground/gui/GUI.java" />
+        <option value="$PROJECT_DIR$/Util/src/com/sam/hab/util/lora/Config.java" />
+        <option value="$PROJECT_DIR$/Util/src/com/sam/hab/util/txrx/CycleManager.java" />
       </list>
     </option>
   </component>
@@ -199,8 +234,8 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="PackagesPane" />
       <pane id="Scope" />
-      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -453,7 +488,7 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="PackagesPane" />
+      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -791,6 +826,7 @@
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Nl-Palette" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32717392" sideWeight="0.49791667" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Image Layers" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
@@ -814,7 +850,6 @@
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32717392" sideWeight="0.49791667" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.1657867" sideWeight="0.49791667" order="1" side_tool="false" content_ui="tabs" />
     </layout>
@@ -871,6 +906,48 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/Ground/src/com/sam/hab/ground/main/GroundMain.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="850">
+          <caret line="59" column="22" lean-forward="false" selection-start-line="59" selection-start-column="22" selection-end-line="59" selection-end-column="22" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Ground/src/com/sam/hab/ground/web/RequestHandler.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1122">
+          <caret line="72" column="1" lean-forward="false" selection-start-line="72" selection-start-column="1" selection-end-line="72" selection-end-column="1" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Payload/src/com/sam/hab/payload/serial/GPSLoop.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1173">
+          <caret line="78" column="49" lean-forward="false" selection-start-line="78" selection-start-column="49" selection-end-line="78" selection-end-column="49" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Util/src/com/sam/hab/util/txrx/CycleManager.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="510">
+          <caret line="39" column="67" lean-forward="true" selection-start-line="39" selection-start-column="67" selection-end-line="39" selection-end-column="67" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Util/src/com/sam/hab/util/lora/LoRa.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/Ground/src/com/sam/hab/ground/main/GroundMain.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="850">
@@ -953,7 +1030,12 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="680">
           <caret line="47" column="89" lean-forward="false" selection-start-line="47" selection-start-column="89" selection-end-line="47" selection-end-column="89" />
-          <folding />
+          <folding>
+            <element signature="e#3124#3125#0" expanded="true" />
+            <element signature="e#3158#3159#0" expanded="true" />
+            <element signature="e#3205#3206#0" expanded="true" />
+            <element signature="e#3239#3240#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1067,47 +1149,15 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Util/src/com/sam/hab/util/lora/Constants.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="791">
-          <caret line="187" column="1" lean-forward="false" selection-start-line="187" selection-start-column="1" selection-end-line="187" selection-end-column="1" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Util/src/com/sam/hab/util/lora/Config.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="791">
-          <caret line="120" column="1" lean-forward="false" selection-start-line="120" selection-start-column="1" selection-end-line="120" selection-end-column="1" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Ground/src/com/sam/hab/ground/gui/GUI.form">
       <provider selected="true" editor-type-id="ui-designer">
         <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Ground/src/com/sam/hab/ground/gui/GUI.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="493">
-          <caret line="46" column="21" lean-forward="false" selection-start-line="46" selection-start-column="21" selection-end-line="46" selection-end-column="21" />
-          <folding />
-        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Payload/src/com/sam/hab/payload/main/ImageManager.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="366">
           <caret line="50" column="0" lean-forward="false" selection-start-line="50" selection-start-column="0" selection-end-line="50" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Payload/src/com/sam/hab/payload/main/PayloadMain.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="791">
-          <caret line="180" column="1" lean-forward="false" selection-start-line="180" selection-start-column="1" selection-end-line="180" selection-end-column="1" />
           <folding />
         </state>
       </provider>
@@ -1120,16 +1170,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Ground/src/com/sam/hab/ground/main/GroundMain.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="850">
-          <caret line="59" column="22" lean-forward="false" selection-start-line="59" selection-start-column="22" selection-end-line="59" selection-end-column="22" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/config.yml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="136">
@@ -1138,18 +1178,57 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Payload/src/Test.java" />
-    <entry file="file://$PROJECT_DIR$/Ground/src/com/sam/hab/ground/web/RequestHandler.java">
+    <entry file="file://$PROJECT_DIR$/Util/src/com/sam/hab/util/lora/LoRa.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1122">
-          <caret line="72" column="1" lean-forward="false" selection-start-line="72" selection-start-column="1" selection-end-line="72" selection-end-column="1" />
+        <state relative-caret-position="645">
+          <caret line="106" column="16" lean-forward="false" selection-start-line="106" selection-start-column="16" selection-end-line="106" selection-end-column="16" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Util/src/com/sam/hab/util/txrx/CycleManager.java">
+    <entry file="file://$PROJECT_DIR$/Util/src/com/sam/hab/util/lora/Config.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="510">
-          <caret line="39" column="67" lean-forward="true" selection-start-line="39" selection-start-column="67" selection-end-line="39" selection-end-column="67" />
+        <state relative-caret-position="356">
+          <caret line="31" column="118" lean-forward="false" selection-start-line="31" selection-start-column="118" selection-end-line="31" selection-end-column="118" />
+          <folding>
+            <element signature="e#3124#3125#0" expanded="true" />
+            <element signature="e#3158#3159#0" expanded="true" />
+            <element signature="e#3205#3206#0" expanded="true" />
+            <element signature="e#3239#3240#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Util/src/com/sam/hab/util/lora/Constants.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="781">
+          <caret line="159" column="5" lean-forward="true" selection-start-line="159" selection-start-column="5" selection-end-line="159" selection-end-column="5" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Ground/src/com/sam/hab/ground/main/GroundMain.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="170">
+          <caret line="22" column="10" lean-forward="false" selection-start-line="22" selection-start-column="10" selection-end-line="22" selection-end-column="10" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Ground/src/com/sam/hab/ground/gui/GUI.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="374">
+          <caret line="106" column="186" lean-forward="false" selection-start-line="106" selection-start-column="167" selection-end-line="106" selection-end-column="186" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Payload/src/com/sam/hab/payload/main/PayloadMain.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="410">
+          <caret line="64" column="157" lean-forward="false" selection-start-line="64" selection-start-column="137" selection-end-line="64" selection-end-column="157" />
           <folding />
         </state>
       </provider>
@@ -1162,10 +1241,18 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Util/src/com/sam/hab/util/lora/LoRa.java">
+    <entry file="file://$PROJECT_DIR$/Ground/src/com/sam/hab/ground/web/RequestHandler.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="305">
-          <caret line="209" column="92" lean-forward="false" selection-start-line="209" selection-start-column="92" selection-end-line="209" selection-end-column="92" />
+        <state relative-caret-position="832">
+          <caret line="72" column="1" lean-forward="false" selection-start-line="72" selection-start-column="1" selection-end-line="72" selection-end-column="1" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Util/src/com/sam/hab/util/txrx/CycleManager.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="612">
+          <caret line="169" column="39" lean-forward="false" selection-start-line="169" selection-start-column="39" selection-end-line="169" selection-end-column="39" />
           <folding />
         </state>
       </provider>

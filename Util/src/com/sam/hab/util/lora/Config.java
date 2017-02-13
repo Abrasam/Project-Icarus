@@ -14,7 +14,8 @@ public class Config {
     private String callsign;
     private double freq;
     private double listen;
-    private Bandwidth bandwidth;
+    private Bandwidth txbandwidth;
+    private Bandwidth rxbandwidth;
     private short sf;
     private CodingRate codingRate;
     private String key;
@@ -28,7 +29,7 @@ public class Config {
             if (!f.exists()) {
                 f.createNewFile();
                 FileWriter writer = new FileWriter(f);
-                writer.write("callsign: TEST00\nkey: key123456\nfreq: 869.850\nlisten: 869.525\nbw: 250K\nsf: 7\ncoding: 5\nimplicit: false\npower: 5");
+                writer.write("callsign: TEST00\nkey: key123456\nfreq: 869.850\nlisten: 869.525\ntxbw: 250K\nrxbw: 62K5\nsf: 7\ncoding: 5\nimplicit: false\npower: 5");
                 writer.close();
             }
             BufferedReader reader = new BufferedReader(new FileReader(f));
@@ -43,7 +44,8 @@ public class Config {
             callsign = (String) conf.get("callsign");
             freq = (double) conf.get("freq");
             listen = (double)conf.get("listen");
-            bandwidth = Bandwidth.getBandwidth((String) conf.get("bw"));
+            txbandwidth = Bandwidth.getBandwidth((String) conf.get("txbw"));
+            rxbandwidth = Bandwidth.getBandwidth((String)conf.get("rxbw"));
             sf = (short) (int) conf.get("sf");
             codingRate = CodingRate.valueOf("CR4_" + String.valueOf(conf.get("coding")));
             implicit = (boolean) conf.get("implicit");
@@ -59,7 +61,8 @@ public class Config {
         Map<Object, Object> conf = new HashMap<Object, Object>();
         conf.put("freq", freq);
         conf.put("listen", listen);
-        conf.put("bandwidth", Bandwidth.asString(bandwidth));
+        conf.put("txbandwidth", Bandwidth.asString(txbandwidth));
+        conf.put("rxbandwidth", Bandwidth.asString(rxbandwidth));
         conf.put("sf", sf);
         conf.put("codingRate", codingRate.toString().replace("CR4_", ""));
         conf.put("implicit", implicit);
@@ -87,8 +90,12 @@ public class Config {
         return freq;
     }
 
-    public Bandwidth getBandwidth() {
-        return bandwidth;
+    public Bandwidth getReceiveBandwidth() {
+        return rxbandwidth;
+    }
+
+    public Bandwidth getTransmitBandwidth() {
+        return txbandwidth;
     }
 
     public short getSf() {
