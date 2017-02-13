@@ -13,6 +13,8 @@ import javax.swing.text.DefaultCaret;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
@@ -39,6 +41,8 @@ public class GUI {
     private JButton imageTransmit;
     private JButton noPicsStored;
     private JTextField timeSince;
+    private JCheckBox uploadTelemetryCheckBox;
+    private JCheckBox uploadImagesCheckBox;
 
     public final CycleManager cm;
     private final File log;
@@ -47,6 +51,8 @@ public class GUI {
     long lastTime = System.currentTimeMillis();
     long lastID = -1;
 
+    private boolean uploadImage = true;
+    private boolean uploadTelem = true;
 
     public GUI(Config conf) {
 
@@ -118,7 +124,9 @@ public class GUI {
                     getLastpckt().setText(new SimpleDateFormat("HH:mm:ss").format(new Date()));
                     updateVelocities(telem.alt);
                     lastID = telem.id;
-                    requestHandler.sendTelemetry(telem.raw);
+                    if (uploadTelem) {
+                        requestHandler.sendTelemetry(telem.raw);
+                    }
                 }
             }
 
@@ -132,7 +140,9 @@ public class GUI {
             @Override
             public void handleImage(byte[] bytes, int iID, int pID) {
                 writeRx("Image no. " + iID + " packet no. " + pID + " received.\n");
-                requestHandler.sendImage(new String(bytes, StandardCharsets.ISO_8859_1));
+                if (uploadImage) {
+                    requestHandler.sendImage(new String(bytes, StandardCharsets.ISO_8859_1));
+                }
             }
 
             @Override
@@ -201,6 +211,28 @@ public class GUI {
                 }
             }
         }).start();
+
+        uploadImagesCheckBox.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    uploadImage = true;
+                } else if (e.getStateChange() == ItemEvent.DESELECTED){
+                    uploadImage = false;
+                }
+            }
+        });
+
+        uploadTelemetryCheckBox.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    uploadTelem = true;
+                } else if (e.getStateChange() == ItemEvent.DESELECTED){
+                    uploadTelem = false;
+                }
+            }
+        });
     }
 
     //Simple sets all the GUI elements to be formatted correctly.

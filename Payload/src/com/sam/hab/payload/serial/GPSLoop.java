@@ -76,7 +76,6 @@ public class GPSLoop implements Runnable {
                     if (c == '\n') {
                         System.out.println(received);
                         if (received.startsWith("$GNGGA")) {
-
                             PayloadMain.generateTelemetry(received);
                             this.serial.read();
                         }
