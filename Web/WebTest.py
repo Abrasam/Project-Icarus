@@ -101,8 +101,8 @@ def handlePacket(raw):
     cursor.execute("INSERT INTO packet (flight_id,time,raw) VALUES (%s,NOW(),%s)", (flight_id,raw,))
 
 server = HTTPServer(("",8080), TestHandler)
+
 try:
     server.serve_forever()
 except KeyboardInterrupt:
     server.server_close()
-
