@@ -35,11 +35,11 @@ body {
     padding-bottom:20px;
 }
 .nav center {
-	position:fixed;
-	width:100%;
-	color:f2f2f2;
-	background-color:#00a3d3;
-	height:125px;
+    position:fixed;
+    width:100%;
+    color:#f2f2f2;
+    background-color:#00a3d3;
+    height:125px;
 }
 .nav h1 {
     font-family: Arial;
@@ -48,4 +48,8 @@ body {
 .nav h5 {
     margin:10px;
     font-family: Arial;
+}
+.nav a {
+    text-decoration:none;
+    color:#f2f2f2;
 }

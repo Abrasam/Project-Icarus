@@ -53,6 +53,8 @@ def handleTelem(data):
     headers = {"Accept" : "application/json", "Content-Type" : "application/json", "charsets" : "utf-8"}
     try:
         res = r.put("http://habitat.habhub.org/habitat/_design/payload_telemetry/_update/add_listener/"+sha256, headers=headers, data=json)
+        with open("log.txt", "a+") as f:
+            f.write("[TELEM FWD] " + data)
     except:
         print("Unable to reach habitat.")
 
@@ -64,41 +66,33 @@ def handleSSDV(data):
     upload = "{\"type\": \"packet\", \"packet\": \"%s\", \"encoding\": \"base64\", \"received\": \"%s\", \"receiver\": \"%s\"}" % (b64, now, "SAMPI")
     try:
         res = r.post("http://ssdv.habhub.org/api/v0/packets", headers=headers, data=upload, timeout=2)
-        print(res)
+        with open("log.txt", "a+") as f:
+            f.write("[IMG PCKT FWD]\n") #remember to add the correct Image ID and stuff here.
     except:
         print("Unable to reach habitat.")
 
 def handlePacket(raw):
+    raw = raw.replace("\n", "\\n")
     data = raw.split("*")
     sentence = data[0].replace(">","")
     csum = data[1]
-    if csum != hex(checksum(sentence.encode('iso-8859-1'),0xFFFF)).upper():
-        return
     packetData = sentence.split(",")
-    callsign = packet[0]
-    packetType = data[2]
-    data = data[3]
+    callsign = packetData[0]
+    print(packetData)
     cursor.execute("SELECT * FROM payload WHERE callsign=%s", (callsign,))
     result = cursor.fetchall()
     maxID = -1
     maxDate = datetime.datetime(1970, 1, 1)
     for row in result:
-        if row[2] > minDate:
+        if row[2] > maxDate:
             maxID = row[0]
             maxDate = row[2]
     if maxID == -1:
         return
-    cursor.execute("SELECT * FROM flight WHERE payload_id=%s", (minID,))
-    result = cursor.fetchall()
-    flight = None
-    for row in result:
-        if row[3] < datetime.datetime.now() and row[4] > datetime.datetime.now():
-            flight = row
-            break
-    if flight is None:
-        return
-    flight_id = flight[0]
-    cursor.execute("INSERT INTO packet (flight_id,time,raw) VALUES (%s,NOW(),%s)", (flight_id,raw,))
+    cursor.execute("INSERT INTO packet (payload_id,time,raw) VALUES (%s,NOW(),%s)", (maxID,raw,))
+    db.commit()
+    with open("log.txt", "a+") as f:
+            f.write("[PCKT LOGGED]"  + raw + "\n")
 
 server = HTTPServer(("",8080), TestHandler)
 
