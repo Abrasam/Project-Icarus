@@ -212,6 +212,7 @@ public class GUI {
             }
         }).start();
 
+        //Upload checboxes.
         uploadImagesCheckBox.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
@@ -222,7 +223,6 @@ public class GUI {
                 }
             }
         });
-
         uploadTelemetryCheckBox.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
