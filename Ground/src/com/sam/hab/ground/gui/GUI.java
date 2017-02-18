@@ -146,7 +146,7 @@ public class GUI {
         });
 
         //Init cycle manager.
-        cm = new CycleManager(false, conf.getCallsign(), new double[] {conf.getFreq(), conf.getListen()}, new Constants.Bandwidth[] {conf.getTransmitBandwidth(), conf.getReceiveBandwidth()}, conf.getSf(), conf.getCodingRate(), !conf.getImplicit(), conf.getKey()) {
+        cm = new CycleManager(false, conf.getCallsign(), new double[] {conf.getFreq(), conf.getListen()}, new Constants.Bandwidth[] {conf.getTransmitBandwidth(), conf.getReceiveBandwidth()}, conf.getSf(), conf.getCodingRate(), !conf.getImplicit(), conf.getPower(), conf.getKey()) {
             @Override
             public void handleTelemetry(ReceivedTelemetry telem) {
                 if (telem == null) {

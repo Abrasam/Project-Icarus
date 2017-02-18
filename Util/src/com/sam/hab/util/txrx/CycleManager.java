@@ -34,7 +34,7 @@ public abstract class CycleManager {
     protected final String callSign;
     protected final String key;
 
-    public CycleManager(boolean payload, String callSign, double[] frequency, Bandwidth[] bandwidth, short sf, CodingRate codingRate, boolean explicit, String key) { //frequency array, the 0 index is for transmit, the 1 index is for receive.
+    public CycleManager(boolean payload, String callSign, double[] frequency, Bandwidth[] bandwidth, short sf, CodingRate codingRate, boolean explicit, byte power, String key) { //frequency array, the 0 index is for transmit, the 1 index is for receive.
         this.payload = payload;
         this.freq = frequency;
         this.bandwidth = bandwidth;
@@ -45,7 +45,7 @@ public abstract class CycleManager {
         this.key = key;
         try {
             lora = new LoRa(freq[0], bandwidth[0], sf, codingRate, explicit);
-            lora.setPAConfig((short)(payload ? 0x08 : 0b00001111));
+            lora.setPAConfig(power);
         } catch (IOException e) {
             throw new RuntimeException("LoRa module contact not established, check your wiring perhaps?");
         }

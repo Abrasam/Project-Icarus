@@ -20,7 +20,7 @@ public class Config {
     private CodingRate codingRate;
     private String key;
     private boolean implicit;
-    private int power; //TODO: implement changing power.
+    private byte power;
 
     public Config() {
         Yaml yaml = new Yaml();
@@ -49,7 +49,7 @@ public class Config {
             sf = (short) (int) conf.get("sf");
             codingRate = CodingRate.valueOf("CR4_" + String.valueOf(conf.get("coding")));
             implicit = (boolean) conf.get("implicit");
-            power = (int)conf.get("power");
+            power = (byte)conf.get("power");
             key = (String)conf.get("key");
         } catch (IOException e) {
             e.printStackTrace();
@@ -90,10 +90,6 @@ public class Config {
 
     public void setImplicit(boolean implicit) {
         this.implicit = implicit;
-    }
-
-    public void setPower(int power) {
-        this.power = power;
     }
 
     public void save() {
@@ -155,7 +151,7 @@ public class Config {
         return implicit;
     }
 
-    public int getPower() {
+    public byte getPower() {
         return power;
     }
 

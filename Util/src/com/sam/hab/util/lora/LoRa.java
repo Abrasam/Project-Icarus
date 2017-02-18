@@ -50,7 +50,7 @@ public class LoRa {
 
         setFrequency(frequency);
         setModemConfig(bandwidth, spreadingFactor, codingRate, explicitHeader);
-        setPAConfig((short)5);
+        setPAConfig((byte)0x08);
         clearIRQFlags();
     }
 
@@ -206,8 +206,9 @@ public class LoRa {
      * @param outputPower The output power register value.
      * @throws IOException
      */
-    public void setPAConfig(short outputPower) throws IOException {
-        //MSB is a 1 to set the PA_BOOST pin to HIGH. The 4 LSBs are the output power value.
+    public void setPAConfig(byte outputPower) throws IOException {
+        outputPower &= 0b00001111;
+        //MSB is a 1 to set the PA_BOOST pin to HIGH. The 4 LSBs are the output power value. The other 3 bits need to be 0 for my implementation.
         byte val = (byte)0b10000000;
         val |= outputPower;
         writeRegister(Register.PACONFIG, val);
