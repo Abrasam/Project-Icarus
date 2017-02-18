@@ -45,7 +45,7 @@ public class Config {
             freq = (double) conf.get("freq");
             listen = (double)conf.get("listen");
             txbandwidth = Bandwidth.getBandwidth((String) conf.get("txbw"));
-            rxbandwidth = Bandwidth.getBandwidth((String)conf.get("rxbw"));
+            rxbandwidth = Bandwidth.getBandwidth((String) conf.get("rxbw"));
             sf = (short) (int) conf.get("sf");
             codingRate = CodingRate.valueOf("CR4_" + String.valueOf(conf.get("coding")));
             implicit = (boolean) conf.get("implicit");
@@ -56,18 +56,59 @@ public class Config {
         }
     }
 
+    public void setCallsign(String callsign) {
+        this.callsign = callsign;
+    }
+
+    public void setFreq(double freq) {
+        this.freq = freq;
+    }
+
+    public void setListen(double listen) {
+        this.listen = listen;
+    }
+
+    public void setTxbandwidth(Bandwidth txbandwidth) {
+        this.txbandwidth = txbandwidth;
+    }
+
+    public void setRxbandwidth(Bandwidth rxbandwidth) {
+        this.rxbandwidth = rxbandwidth;
+    }
+
+    public void setSf(short sf) {
+        this.sf = sf;
+    }
+
+    public void setCodingRate(CodingRate codingRate) {
+        this.codingRate = codingRate;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public void setImplicit(boolean implicit) {
+        this.implicit = implicit;
+    }
+
+    public void setPower(int power) {
+        this.power = power;
+    }
+
     public void save() {
         Yaml yaml = new Yaml();
         Map<Object, Object> conf = new HashMap<Object, Object>();
+        conf.put("callsign", callsign);
         conf.put("freq", freq);
         conf.put("listen", listen);
-        conf.put("txbandwidth", Bandwidth.asString(txbandwidth));
-        conf.put("rxbandwidth", Bandwidth.asString(rxbandwidth));
+        conf.put("txbw", Bandwidth.asString(txbandwidth));
+        conf.put("rxbw", Bandwidth.asString(rxbandwidth));
         conf.put("sf", sf);
-        conf.put("codingRate", codingRate.toString().replace("CR4_", ""));
+        conf.put("coding", codingRate.toString().replace("CR4_", ""));
         conf.put("implicit", implicit);
         conf.put("power", power);
-        String data = yaml.dump(conf);
+        conf.put("key", key);
         File f = new File("config.yml");
         if (f.exists()) {
             f.delete();
@@ -75,7 +116,7 @@ public class Config {
         try {
             f.createNewFile();
             FileWriter writer = new FileWriter(f);
-            writer.write(data);
+            yaml.dump(conf,writer);
             writer.close();
         } catch (IOException e) {
             e.printStackTrace();

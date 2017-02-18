@@ -43,6 +43,9 @@ public class GUI {
     private JTextField timeSince;
     private JCheckBox uploadTelemetryCheckBox;
     private JCheckBox uploadImagesCheckBox;
+    private JTextField callsign;
+    private JButton autoconf;
+    private JFormattedTextField key;
 
     public final CycleManager cm;
     private final File log;
@@ -67,6 +70,9 @@ public class GUI {
             e.printStackTrace();
         }
 
+        //Init request handler.
+        RequestHandler requestHandler = new RequestHandler();
+
         //Prepare the reboot button so it completes the correct action.
         rebootButton.addActionListener(new ActionListener() {
             @Override
@@ -90,6 +96,39 @@ public class GUI {
             }
         });
 
+        autoconf.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String cs = callsign.getText();
+                String ky = key.getText();
+                String data = requestHandler.getPayloadData(cs);
+                String[] payload = data.split(",");
+                if (payload.length == 8) {
+                    String callsgn = payload[0];
+                    String txFreq = payload[1];
+                    int txBw = Integer.valueOf(payload[2]);
+                    String sf = payload[3];
+                    String coding = payload[4];
+                    boolean explicit = payload[5].equals("1");
+                    String rxFreq = payload[6];
+                    int rxBw = Integer.valueOf(payload[7]);
+                    conf.setCallsign(callsgn);
+                    conf.setListen(Double.valueOf(txFreq));
+                    conf.setRxbandwidth(Constants.Bandwidth.lookup(txBw));
+                    conf.setSf(Short.valueOf(sf));
+                    conf.setCodingRate(Constants.CodingRate.valueOf("CR4_" + coding));
+                    conf.setImplicit(!explicit);
+                    conf.setFreq(Double.valueOf(rxFreq));
+                    conf.setTxbandwidth(Constants.Bandwidth.lookup(rxBw));
+                    conf.setKey(ky);
+                    conf.save();
+                    JOptionPane.showMessageDialog(panelMain, "Success! Configured for " + callsgn + ". Please restart the program for changes to take effect.");
+                } else {
+                    JOptionPane.showMessageDialog(panelMain, "Autoconfigure failed, please edit config.yml and restart the program.");
+                }
+            }
+        });
+
         //Prepares the image transmit toggle button so when clicked it prepares a packet to send which toggles image transmission.
         imageTransmit.addActionListener(new ActionListener() {
             @Override
@@ -105,9 +144,6 @@ public class GUI {
                 cm.addToTx(TwoWayPacketGenerator.generateCommand(conf.getCallsign(), "IMGNO"));
             }
         });
-
-        //Init request handler.
-        RequestHandler requestHandler = new RequestHandler();
 
         //Init cycle manager.
         cm = new CycleManager(false, conf.getCallsign(), new double[] {conf.getFreq(), conf.getListen()}, new Constants.Bandwidth[] {conf.getTransmitBandwidth(), conf.getReceiveBandwidth()}, conf.getSf(), conf.getCodingRate(), !conf.getImplicit(), conf.getKey()) {

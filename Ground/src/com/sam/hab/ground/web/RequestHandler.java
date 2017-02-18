@@ -1,8 +1,6 @@
 package com.sam.hab.ground.web;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -69,5 +67,22 @@ public class RequestHandler {
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
+    }
+
+    public String getPayloadData(String callsign) {
+        try {
+            URL url = new URL(server + callsign);
+            HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+            connection.setRequestMethod("GET");
+            connection.setDoOutput(true);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            String data = reader.readLine();
+            reader.close();
+            System.out.println(data);
+            return data;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 }

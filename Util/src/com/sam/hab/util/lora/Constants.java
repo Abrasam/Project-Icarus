@@ -141,6 +141,15 @@ public class Constants {
             }
             return null;
         }
+
+        public static Bandwidth lookup(int txBw) {
+            for (Bandwidth bw : Bandwidth.values()) {
+                if (bw.val == txBw) {
+                    return bw;
+                }
+            }
+            return null;
+        }
     }
 
     /**

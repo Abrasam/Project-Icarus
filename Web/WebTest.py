@@ -21,12 +21,13 @@ class TestHandler(SimpleHTTPRequestHandler):
                 maxDate = row[2]
         if maxID == -1:
             return
-        cursor.execute("SELECT callsign,frequency,bandwidth,spreading_factor,coding,explicit FROM payload WHERE payload_id=%s", (maxID,))
+        cursor.execute("SELECT callsign,txfrequency,txbandwidth,spreading_factor,coding,explicit,rxfrequency,rxbandwidth FROM payload WHERE payload_id=%s", (maxID,))
         result = cursor.fetchall()[0]
         self.send_response(200)
         self.send_header('Content-type','text/html')
         self.end_headers()
-        self.wfile.write(str(result)[1:][::-1][1:][::-1].encode("iso-8859-1"))
+        out = result[0] + "," + str(result[1]) + "," + str(result[2]) + "," + str(result[3]) + "," + str(result[4]) + "," + str(result[5]) + "," + str(result[6]) + "," + str(result[7])
+        self.wfile.write(out.encode("iso-8859-1"))
             
 
     def do_PUT(self):

@@ -1,9 +1,2 @@
-callsign: TEST00
-key: key123456
-freq: 869.850
-listen: 869.525
-bw: 250K
-sf: 7
-coding: 5
-implicit: false
-power: 5
+{coding: '5', implicit: false, sf: 7, callsign: GSCOTF, freq: 869.525, power: 5, listen: 869.85,
+  rxbw: 250K, key: notakey, txbw: 62K5}

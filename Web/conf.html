@@ -15,19 +15,33 @@
             <form action="conf.php" method="post">
                 Callsign:<br>
                 <input type="text" name="callsign"><br>
-                Frequency (MHz):<br>
-                <input type="text" name="frequency"><br>
-                Bandwidth:<br>
-                <input type="radio" name="bandwidth" value="500">500KHz
-                <input type="radio" name="bandwidth" value="250" checked>250KHz
-                <input type="radio" name="bandwidth" value="125">125KHz
-                <input type="radio" name="bandwidth" value="62.5">62.5KHz
-                <input type="radio" name="bandwidth" value="41.7">41.7KHz
-                <input type="radio" name="bandwidth" value="31.25">31.25KHz
-                <input type="radio" name="bandwidth" value="20.8">20.8KHz
-                <input type="radio" name="bandwidth" value="15.6">15.6KHz
-                <input type="radio" name="bandwidth" value="10.4">10.4KHz
-                <input type="radio" name="bandwidth" value="7.8">7.8KHz
+                Transmit Frequency (MHz):<br>
+                <input type="text" name="txfrequency"><br>
+		Receive Frequency (MHz):<br>
+                <input type="text" name="rxfrequency"><br>
+                Transmit Bandwidth:<br>
+                <input type="radio" name="txbandwidth" value="9">500KHz
+                <input type="radio" name="txbandwidth" value="8" checked>250KHz
+                <input type="radio" name="txbandwidth" value="7">125KHz
+                <input type="radio" name="txbandwidth" value="6">62.5KHz
+                <input type="radio" name="txbandwidth" value="5">41.7KHz
+                <input type="radio" name="txbandwidth" value="4">31.25KHz
+                <input type="radio" name="txbandwidth" value="3">20.8KHz
+                <input type="radio" name="txbandwidth" value="2">15.6KHz
+                <input type="radio" name="txbandwidth" value="1">10.4KHz
+                <input type="radio" name="txbandwidth" value="0">7.8KHz
+                <br>
+		Receive Bandwidth:<br>
+                <input type="radio" name="rxbandwidth" value="9">500KHz
+                <input type="radio" name="rxbandwidth" value="8" checked>250KHz
+                <input type="radio" name="rxbandwidth" value="7">125KHz
+                <input type="radio" name="rxbandwidth" value="6">62.5KHz
+                <input type="radio" name="rxbandwidth" value="5">41.7KHz
+                <input type="radio" name="rxbandwidth" value="4">31.25KHz
+                <input type="radio" name="rxbandwidth" value="3">20.8KHz
+                <input type="radio" name="rxbandwidth" value="2">15.6KHz
+                <input type="radio" name="rxbandwidth" value="1">10.4KHz
+                <input type="radio" name="rxbandwidth" value="0">7.8KHz
                 <br>
                 Spreading Factor (6-12):<br>
                 <input type="text" name="spreading"><br>

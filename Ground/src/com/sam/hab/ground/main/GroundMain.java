@@ -19,6 +19,7 @@ public class GroundMain {
         final Config conf = new Config();
 
         //Window setup.
+
         JFrame frame = new JFrame("Prototype 2-Way HAB Comms");
         GUI gui = new GUI(conf);
         gui.init();
