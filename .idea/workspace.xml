@@ -36,7 +36,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="GroundMain.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="GroundMain.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Ground/src/com/sam/hab/ground/main/GroundMain.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="635">
@@ -97,11 +97,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="CycleManager.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="CycleManager.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Util/src/com/sam/hab/util/txrx/CycleManager.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="60">
-              <caret line="25" column="12" selection-start-line="25" selection-start-column="12" selection-end-line="25" selection-end-column="12" />
+            <state relative-caret-position="420">
+              <caret line="49" column="0" selection-start-line="49" selection-start-column="0" selection-end-line="49" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -196,8 +196,8 @@
         <option value="$PROJECT_DIR$/Util/src/com/sam/hab/util/lora/Constants.java" />
         <option value="$PROJECT_DIR$/Util/src/com/sam/hab/util/lora/Config.java" />
         <option value="$PROJECT_DIR$/Ground/src/com/sam/hab/ground/gui/GUI.java" />
-        <option value="$PROJECT_DIR$/Util/src/com/sam/hab/util/txrx/CycleManager.java" />
         <option value="$PROJECT_DIR$/Ground/src/com/sam/hab/ground/main/GroundMain.java" />
+        <option value="$PROJECT_DIR$/Util/src/com/sam/hab/util/txrx/CycleManager.java" />
       </list>
     </option>
   </component>
@@ -1004,18 +1004,18 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Util/src/com/sam/hab/util/txrx/CycleManager.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="25" column="12" selection-start-line="25" selection-start-column="12" selection-end-line="25" selection-end-column="12" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Ground/src/com/sam/hab/ground/main/GroundMain.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="635">
           <caret line="60" column="8" selection-start-line="60" selection-start-column="8" selection-end-line="60" selection-end-column="8" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Util/src/com/sam/hab/util/txrx/CycleManager.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="420">
+          <caret line="49" column="0" selection-start-line="49" selection-start-column="0" selection-end-line="49" selection-end-column="0" />
           <folding />
         </state>
       </provider>

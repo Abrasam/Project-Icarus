@@ -23,7 +23,7 @@ public abstract class CycleManager {
 
     private final boolean payload;
 
-    private LoRa lora;
+    private final LoRa lora;
 
     private final double[] freq;
     private final Bandwidth[] bandwidth;
@@ -47,8 +47,7 @@ public abstract class CycleManager {
             lora = new LoRa(freq[0], bandwidth[0], sf, codingRate, explicit);
             lora.setPAConfig((short)(payload ? 0x08 : 0b00001111));
         } catch (IOException e) {
-            e.printStackTrace();
-            //throw new RuntimeException("LoRa module contact not established, check your wiring perhaps?");
+            throw new RuntimeException("LoRa module contact not established, check your wiring perhaps?");
         }
 
         Thread packetThread = new Thread(new PacketHandler(this));
