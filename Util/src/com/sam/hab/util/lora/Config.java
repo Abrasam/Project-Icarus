@@ -49,7 +49,7 @@ public class Config {
             sf = (short) (int) conf.get("sf");
             codingRate = CodingRate.valueOf("CR4_" + String.valueOf(conf.get("coding")));
             implicit = (boolean) conf.get("implicit");
-            power = (byte)conf.get("power");
+            power = (byte)((int)conf.get("power"));
             key = (String)conf.get("key");
         } catch (IOException e) {
             e.printStackTrace();
