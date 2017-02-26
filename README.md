@@ -19,4 +19,6 @@ Ground jar:
 Payload jar:
 ```wget https://github.com/Abrasam/Project-Icarus/raw/master/out/artifacts/Payload_jar/Payload.jar -o Payload.jar ```
 
-These files can now be executed with ```sudo java -jar <jarfile>.jar``` note that if running the ground station via VNC you will need to use '''sudo -E''' in order to do so.
+These files can now be executed with ```sudo java -jar <jarfile>.jar``` note that if running the ground station via VNC you will need to use '''sudo -E''' (in order to preserve environmental variables).
+
+If you have any problems please raise an issue!
