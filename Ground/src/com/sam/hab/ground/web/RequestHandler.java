@@ -78,7 +78,6 @@ public class RequestHandler {
             BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             String data = reader.readLine();
             reader.close();
-            System.out.println(data);
             return data;
         } catch (IOException e) {
             e.printStackTrace();

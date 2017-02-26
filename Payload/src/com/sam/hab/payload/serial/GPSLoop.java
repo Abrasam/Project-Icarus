@@ -41,7 +41,7 @@ public class GPSLoop implements Runnable {
 
     /**
      * My GPS needs to be in airborne mode to bypass the COCOM limits that disable a GPS if it reaches a high altitude because it is assumed to be an ICBM.
-     * This is a recursive algorithm that sets the GPS into airborne mode, it will continuously try 100 times recursively but if it fails after the 101th try then the program will exit.
+     * This is a recursive algorithm that sets the GPS into airborne mode, it will continuously try 100 times recursively but if it fails after the 100th try then the program will exit.
      * This prevents me from starting a flight not in airborne mode.
      */
     private boolean setAirborneMode(int attempts) throws IOException, InterruptedException {
@@ -54,9 +54,9 @@ public class GPSLoop implements Runnable {
         for (byte b : read) {
             s += (char)(0xFF & b);
         }
-        if (s.contains("µb\u0005\u0001\u0002\u0000\u0006$2[")) {
+        if (s.contains("µb\u0005\u0001\u0002\u0000\u0006$2[")) { //This is the unicode representation of the sequence of bytes which the GPS will send if it has successfully been put into airborne mode.
             return true;
-        } else if (attempts > 100) {
+        } else if (attempts > 99) {
             return false;
         } else {
             return setAirborneMode(attempts + 1);
@@ -74,7 +74,6 @@ public class GPSLoop implements Runnable {
                     char c = (char)(0xFF & this.serial.read(1)[0]);
                     received = received + c;
                     if (c == '\n') {
-                        System.out.println(received);
                         if (received.startsWith("$GNGGA")) {
                             PayloadMain.generateTelemetry(received);
                             this.serial.read();

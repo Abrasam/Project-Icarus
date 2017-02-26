@@ -38,7 +38,6 @@ public class PayloadMain {
                     String lon = (data[5].equals("W") ? "-" : "") + data[4];
                     String time = time = data[1].substring(0, 2) + ":" + data[1].substring(2, 4) + ":" + data[1].substring(4, 6);
                     String telemetry = callsign + "," + String.valueOf(System.currentTimeMillis() / 1000) + "," + time + "," + lat + "," + lon + "," + data[9] + "," + data[7];
-                    System.out.println(telemetry);
                     String csum = CRC16CCITT.calcCsum(telemetry.getBytes(StandardCharsets.ISO_8859_1));
                     telemetry = "$$" + telemetry + "*" + csum + "\n";
                     currentTelemetry = telemetry;
@@ -88,13 +87,13 @@ public class PayloadMain {
                         handleShell(packet);
                         break;
                     case OTHER:
-                        //Not really sure what to do here? How about you?
+                        System.err.println("Packet classed 'OTHER' received:");
+                        System.err.println(packet.data);
                 }
             }
 
             @Override
             public String getTelemetry() {
-                System.out.println(currentTelemetry);
                 return currentTelemetry;
             }
 

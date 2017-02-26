@@ -38,7 +38,6 @@ public class PacketHandler implements Runnable {
                                 cm.handleImage(bytes, res[0], res[1]);
                             } catch (NullPointerException e) {
                                 e.printStackTrace();
-                                //Error?
                             }
                         }
                     }
@@ -46,10 +45,9 @@ public class PacketHandler implements Runnable {
                 try {
                     Thread.sleep(100);
                 } catch (InterruptedException e) {
-                    //Error?
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                //e.printStackTrace();
             }
         }
     }

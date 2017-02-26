@@ -185,7 +185,6 @@ public class GUI {
             public void handleTwoWay(ReceivedPacket packet) {
                 if (packet == null) {
                     return;
-                    //TODO: LOGIC HERE FOR NACK PERHAPS!
                 }
                 writeRx(packet.raw);
                 switch (packet.type) {
@@ -200,19 +199,6 @@ public class GUI {
                     case DIAG:
                         String[] data = packet.data.split("/");
                         getControlResults().append(data[0] + ": " + data[1] + "\n");
-                        break;
-                    case NACK:
-                        String[] ids = packet.data.split("/");
-                        String[] transmitted = getTransmitted();
-                        for (String id : Arrays.asList(ids)) {
-                            try {
-                                addToTx(transmitted[Integer.parseInt(String.valueOf(id))]);
-                            } catch (NumberFormatException e) {
-                                //Error?
-                            } catch (ArrayIndexOutOfBoundsException e) {
-                                //Error?
-                            }
-                        }
                         break;
                     case OTHER:
                         //Not really sure what to do here? How about you?

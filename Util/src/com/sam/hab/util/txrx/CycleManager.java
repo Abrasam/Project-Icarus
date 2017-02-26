@@ -17,9 +17,9 @@ public abstract class CycleManager {
      * This class manages the switching between transmission and receiving modes of the radio and manages the handling of all received packets and the preparation for sending for all packets.
      */
 
+    //
     private Queue<String> transmitQueue = new LinkedList<String>();
     private Queue<String> receiveQueue = new LinkedList<String>();
-    private String[] transmitted = new String[10];
 
     private final boolean payload;
 
@@ -34,7 +34,7 @@ public abstract class CycleManager {
     protected final String callSign;
     protected final String key;
 
-    public CycleManager(boolean payload, String callSign, double[] frequency, Bandwidth[] bandwidth, short sf, CodingRate codingRate, boolean explicit, byte power, String key) { //frequency array, the 0 index is for transmit, the 1 index is for receive.
+    public CycleManager(boolean payload, String callSign, double[] frequency, Bandwidth[] bandwidth, short sf, CodingRate codingRate, boolean explicit, byte power, String key) { //Explaining frequency and bandwidth arrays: the 0 index is for transmit, the 1 index is for receive.
         this.payload = payload;
         this.freq = frequency;
         this.bandwidth = bandwidth;
@@ -178,7 +178,6 @@ public abstract class CycleManager {
                 }
             } else {
                 transmit[i] = doPacket(transmitQueue.poll(), String.valueOf(i), key);
-                transmitted[i] = transmit[i];
             }
         }
         if (payload) {
@@ -211,10 +210,6 @@ public abstract class CycleManager {
         packet = packet.replace(">>","");
         packet = packet.replaceFirst("%s",id);
         return ">>" + packet + "*" + CRC16CCITT.calcCsum((packet + key).getBytes()) + "\n";
-    }
-
-    public String[] getTransmitted() {
-        return transmitted;
     }
 
     /**

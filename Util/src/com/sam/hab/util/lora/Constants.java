@@ -175,8 +175,6 @@ public class Constants {
         CMD(0),
         SHELL(1),
         DIAG(2),
-        NACK(3),
-        RESEND(4),
         OTHER(5);
 
         public final int id;
