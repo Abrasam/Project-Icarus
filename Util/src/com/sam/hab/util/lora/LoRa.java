@@ -50,7 +50,7 @@ public class LoRa {
 
         setFrequency(frequency);
         setModemConfig(bandwidth, spreadingFactor, codingRate, explicitHeader);
-        setPAConfig((byte)0x08);
+        setPAConfig((byte)0x08); //This is the default value which equates to ~10mW.
         clearIRQFlags();
     }
 

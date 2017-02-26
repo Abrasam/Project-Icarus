@@ -22,6 +22,10 @@ public class Config {
     private boolean implicit;
     private byte power;
 
+    /**
+     * In the constructor the config.yml file is read and using the SnakeYAML library converted into a HashMap.
+     * The HashMap's contents are then extracted, cast to the correct types and stored in the appropriate field.
+     */
     public Config() {
         Yaml yaml = new Yaml();
         File f = new File("config.yml");
@@ -92,6 +96,9 @@ public class Config {
         this.implicit = implicit;
     }
 
+    /**
+     * Stores all parameters in a HashMap and writes this HashMap to a file as YAML.
+     */
     public void save() {
         Yaml yaml = new Yaml();
         Map<Object, Object> conf = new HashMap<Object, Object>();
