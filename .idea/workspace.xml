@@ -52,8 +52,8 @@
       <file leaf-file-name="Config.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Util/src/com/sam/hab/util/lora/Config.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-136">
-              <caret line="26" column="112" lean-forward="false" selection-start-line="26" selection-start-column="112" selection-end-line="26" selection-end-column="112" />
+            <state relative-caret-position="595">
+              <caret line="60" column="5" lean-forward="true" selection-start-line="60" selection-start-column="5" selection-end-line="60" selection-end-column="5" />
               <folding>
                 <element signature="e#3264#3280#0" expanded="true" />
               </folding>
@@ -1366,8 +1366,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Util/src/com/sam/hab/util/lora/Config.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-136">
-          <caret line="26" column="112" lean-forward="false" selection-start-line="26" selection-start-column="112" selection-end-line="26" selection-end-column="112" />
+        <state relative-caret-position="595">
+          <caret line="60" column="5" lean-forward="true" selection-start-line="60" selection-start-column="5" selection-end-line="60" selection-end-column="5" />
           <folding>
             <element signature="e#3264#3280#0" expanded="true" />
           </folding>
