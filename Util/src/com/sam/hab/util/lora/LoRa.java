@@ -50,7 +50,7 @@ public class LoRa {
 
         setFrequency(frequency);
         setModemConfig(bandwidth, spreadingFactor, codingRate, explicitHeader);
-        setPAConfig((byte)0x08);
+        setPAConfig((byte)0x08); //This is the default value which equates to ~10mW.
         clearIRQFlags();
     }
 
@@ -64,7 +64,6 @@ public class LoRa {
             setMode(Mode.RX);
             return payload;
         } catch (IOException e) {
-            //Error?
         }
         return null;
     }
@@ -76,6 +75,7 @@ public class LoRa {
      * @throws IOException if write operation fails, for example if the radio is disconnected unexpectedly.
      */
     private void writeRegister(Register reg, byte... values) throws IOException {
+        System.out.println(reg.toString());
         byte[] send = new byte[values.length + 1];
         send[0] = (byte)(reg.addr | 0x80);
         System.arraycopy(values, 0, send, 1, values.length);
@@ -105,8 +105,9 @@ public class LoRa {
      * @throws IOException
      */
     public void setFrequency(double frequency) throws IOException {
-        assert this.mode == Mode.SLEEP || this.mode == Mode.STDBY;
+        assert this.mode == Mode.SLEEP || this.mode == Mode.STDBY; //Assertion used as these conditions should never not be true.
         int freq = (int)(frequency * (7110656 / 434));
+        //This method separates the frequency into the 8 most significant bits, the 8 middle bits and the 8 least significant bits as they are stored in separate registers.
         writeRegister(Register.FRMSB, (byte)((freq >> 16) & 0xFF));
         writeRegister(Register.FRMID, (byte)((freq >> 8) & 0xFF));
         writeRegister(Register.FRLSB, (byte)(freq & 0xFF));

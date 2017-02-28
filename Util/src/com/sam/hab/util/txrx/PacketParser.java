@@ -57,7 +57,6 @@ public class PacketParser {
         System.arraycopy(in, 0, bytes, 1, in.length);
         int imageNo = (0xFF & bytes[6]);
         int packetNo = (0xFF & bytes[7]) * 256 + (0xFF & bytes[8]);
-        //TODO: Log here that I've received a packet.
         FileOutputStream fos = null;
         File file = new File("images/image_" + String.valueOf(imageNo) + ".bin");
         if (!file.getParentFile().exists()) {
@@ -73,13 +72,10 @@ public class PacketParser {
             pr.waitFor();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-            //Error here?
         } catch (IOException e) {
             e.printStackTrace();
-            //Error here?
         } catch (InterruptedException e) {
-            //This really shouldn't happen but:
-            //Error here?
+
         }
         return new int[] {imageNo, packetNo};
     }
