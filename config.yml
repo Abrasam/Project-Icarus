@@ -1,2 +1,21 @@
-{coding: '5', implicit: false, sf: 7, callsign: GSCOTF, freq: 869.525, power: 5, listen: 869.85,
-  rxbw: 250K, key: notakey, txbw: 62K5}
+#Error coding rate, options are 5, 6, 7 and 8 (they correspond to 4/5, 4/6, 4/7, 4/8).
+coding: '5'
+#Whether to use implicit headers. This is a boolean.
+implicit: false
+#Spreading factor, options are integers from 6-12.
+sf: 7
+#Callsign, must be 6 characters or less, identifies the payload.
+callsign: GSCOTF
+#Transmission frequency.
+freq: 869.525
+#Transmission power.
+power: 5
+#Listening frequency.
+listen: 869.85
+#Listening bandwidth.
+rxbw: 250K
+#Authentication key.
+key: notakey
+#Transmission bandwidth.
+txbw: 62K5
+
