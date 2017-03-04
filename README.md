@@ -24,3 +24,5 @@ These files can now be executed with ```sudo java -jar <jarfile>.jar``` note tha
 The software is configured to work with this board by Uputronics: https://store.uputronics.com/index.php?route=product/product&path=61&product_id=68 with the LoRa module in the CE1 slot.
 
 If you have any problems please raise an issue!
+
+My slightly silly video demonstrating my project: https://www.youtube.com/watch?v=zTSZHrui7N4&feature=youtu.be
