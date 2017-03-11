@@ -68,7 +68,7 @@ def handleSSDV(data):
     try:
         res = r.post("http://ssdv.habhub.org/api/v0/packets", headers=headers, data=upload, timeout=2)
         with open("log.txt", "a+") as f:
-            f.write("[IMG PCKT FWD]\n") #remember to add the correct Image ID and stuff here.
+            f.write("[IMG PCKT FWD]\n")
     except:
         print("Unable to reach habitat.")
 
