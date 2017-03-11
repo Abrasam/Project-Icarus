@@ -1,0 +1,28 @@
+<html>
+    <head>
+        <title>Export 2-Way Data</title>
+        <link rel="stylesheet" type="text/css" href="style.css">
+    </head>
+    <body style="font-family:Arial;">
+        <div class="nav">
+            <center>
+                <h1><a href="/">Project Icarus</a></h1>
+                <h5>A 2-way communications system for High Altitude Ballooning. Works with Habitat.</h5>
+                <h5>By Sam Sully (@Sullore or jakeio on #highaltitude).</h5>
+            </center>
+        </div>
+        <div class="content">
+	    <p>Use the form below to export 2-way packets transmitted by your payload.
+            <form action="export.php" method="post">
+                Callsign:<br>
+                <input type="text" name="callsign"><br>
+                Window start:<br>
+		<input type="date" name="start"><br>
+                Window End:<br>
+		<input type="date" name="end"><br>
+                <br>
+                <input type="submit" value = "Save">
+            </form>
+        </div>
+    </body>
+</html>

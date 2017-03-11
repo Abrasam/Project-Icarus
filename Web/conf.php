@@ -13,13 +13,17 @@
         </div>
         <div class="content">
             <?php
+            //Validation, ensure all data valid.
             if (count($_POST) < 8 || (is_null($_POST["callsign"]) || $_POST["txfrequency"] == 0 || $_POST["rxfrequency"] == 0 || $_POST["spreading"] > 12 || $_POST["spreading"] < 6)) {
+                //End if data invalid.
                 die("Please supply all values within valid ranges.");
             }
+            //New SQL connection.
             $conn = new mysqli("localhost","root","OlympiaRPG","icarus");
             if ($conn->connect_error) {
                 die("Connection to MySQL server failed. Bad things a-happening!");
             }
+            //Extract data from HTTP POST.
             $callsign = $_POST["callsign"];
             $txfreq = $_POST["txfrequency"];
 	    $rxfreq = $_POST["rxfrequency"];
@@ -28,10 +32,11 @@
             $sf = $_POST["spreading"];
             $coding = $_POST["coding"];
             $explicit = $_POST["header"];
+            //Prepare SQL statement.
             $stmt = $conn->prepare("INSERT INTO payload (callsign,txfrequency,txbandwidth,spreading_factor,coding,explicit,created_at,rxfrequency,rxbandwidth) VALUES (?,?,?,?,?,?,NOW(),?,?)");
             $stmt->bind_param("sddiiidd",$callsign,$txfreq,$txbandwidth,$sf,$coding,$explicit,$rxfreq,$rxbandwidth);
             $stmt->execute();
-
+            //Insert and echo success message.
             echo "Successfully added to payload database!";
             $stmt->close();
             $conn->close();
