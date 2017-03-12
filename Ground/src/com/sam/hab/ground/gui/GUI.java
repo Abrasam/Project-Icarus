@@ -86,7 +86,7 @@ public class GUI {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String cmd = consoleInput.getText();
-                if (cmd.length() > 0 && cmd.length() < 255 - 14 - conf.getCallsign().length() && !cmd.contains(",")) {
+                if (cmd.length() > 0 && cmd.length() < 255 - 14 - conf.getCallsign().length() && !cmd.contains(",") && !cmd.contains("*")) { //Ensures valid command.
                     cm.addToTx(TwoWayPacketGenerator.generateShellCmdPacket(conf.getCallsign(), cmd));
                     consoleInput.setBackground(Color.GREEN);
                     consoleInput.setText("");
@@ -153,8 +153,8 @@ public class GUI {
                     return;
                 }
                 getAlt().setText(String.valueOf(telem.alt));
-                getLat().setText(String.valueOf(telem.lat));
-                getLon().setText(String.valueOf(telem.lon));
+                getLat().setText(String.valueOf(toDeg(telem.lat)));
+                getLon().setText(String.valueOf(toDeg(telem.lon)));
                 writeRx(telem.raw);
                 if (telem.id != lastID) {
                     getLastpckt().setText(new SimpleDateFormat("HH:mm:ss").format(new Date()));
@@ -255,6 +255,19 @@ public class GUI {
                 }
             }
         });
+    }
+
+    private static Double toDeg(float nmea) {
+        boolean neg = false;
+        if (nmea < 0) {
+            neg = true;
+            nmea = Math.abs(nmea);
+        }
+        String in = Float.toString(nmea);
+        String[] data = in.split("\\.");
+        return (int)(1000000*(Double.valueOf(data[0].substring(0,data[0].length()-2)) +
+                Double.valueOf(data[0].substring(data[0].length()-2) + "." +
+                        data[1])/60d))/1000000d * (neg ? -1 : 1);
     }
 
     //Simple sets all the GUI elements to be formatted correctly.

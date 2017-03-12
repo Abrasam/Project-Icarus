@@ -14,7 +14,7 @@
         <div class="content">
             <?php
             //Validation, ensure all data valid.
-            if (count($_POST) < 8 || (is_null($_POST["callsign"]) || $_POST["txfrequency"] == 0 || $_POST["rxfrequency"] == 0 || $_POST["spreading"] > 12 || $_POST["spreading"] < 6)) {
+            if (count($_POST) < 8 || (is_null($_POST["callsign"]) || $_POST["txfrequency"] <= 0 || $_POST["rxfrequency"] <= 0 || $_POST["spreading"] > 12 || $_POST["spreading"] < 6 || strlen($_POST["callsign"]) > 6)) {
                 //End if data invalid.
                 die("Please supply all values within valid ranges.");
             }
