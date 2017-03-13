@@ -36,7 +36,7 @@ public class PayloadMain {
                 try {
                     String lat = (data[3].equals("S") ? "-" : "") + data[2];
                     String lon = (data[5].equals("W") ? "-" : "") + data[4];
-                    String time = time = data[1].substring(0, 2) + ":" + data[1].substring(2, 4) + ":" + data[1].substring(4, 6);
+                    String time = data[1].substring(0, 2) + ":" + data[1].substring(2, 4) + ":" + data[1].substring(4, 6);
                     String telemetry = callsign + "," + String.valueOf(System.currentTimeMillis() / 1000) + "," + time + "," + lat + "," + lon + "," + data[9] + "," + data[7];
                     String csum = CRC16CCITT.calcCsum(telemetry.getBytes(StandardCharsets.ISO_8859_1));
                     telemetry = "$$" + telemetry + "*" + csum + "\n";
