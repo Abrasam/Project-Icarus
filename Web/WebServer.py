@@ -9,6 +9,12 @@ db = MySQLdb.connect(host="localhost",user="root",passwd="OlympiaRPG",db="icarus
 cursor = db.cursor()
 
 class TestHandler(SimpleHTTPRequestHandler):
+
+    '''
+    This function handles the HTTP GET request which can be sent by the ground station in order ro request a payload's configuration details.
+    It simply looks up in the database any payload with the given callsign and if one is found it returns the configuration data as CSV.
+    If not, it returns nothing.
+    '''
     def do_GET(self):
         path = self.path[1:]
         cursor.execute("SELECT * FROM payload WHERE callsign=%s", (path,))
@@ -30,6 +36,11 @@ class TestHandler(SimpleHTTPRequestHandler):
         self.wfile.write(out.encode("iso-8859-1"))
             
 
+    '''
+    This function handles the potential PUT requests to upload telemetry, SSDV or packet data to the server from the ground station.
+    The request type is determined by the URL used, /telemetryUpload, /imageUpload and /packetUpload are self-explanatory.
+    The appropriate function is then called to handle the request.
+    '''
     def do_PUT(self):
         path = self.path
         length = int(self.headers['content-length'])
@@ -45,6 +56,9 @@ class TestHandler(SimpleHTTPRequestHandler):
         self.end_headers()
         self.wfile.write("Received.".encode())
 
+'''
+This function handles telemetry data, this is forwarded to the habhub server for logging and displaying on a map.
+'''
 def handleTelem(data):
     b64 = (base64.b64encode(data.encode()))
     sha256 = hashlib.sha256(b64).hexdigest()
@@ -59,6 +73,9 @@ def handleTelem(data):
     except:
         print("Unable to reach habitat.")
 
+'''
+This function handles SSDV data, it simply uploads it to the habhub servers for displaying on ssdv.habhub.org.
+'''
 def handleSSDV(data):
     data = "U" + data
     b64 = base64.b64encode(bytearray(data.encode('iso-8859-1'))).decode('utf-8')
@@ -72,6 +89,10 @@ def handleSSDV(data):
     except:
         print("Unable to reach habitat.")
 
+
+'''
+This function will input a 2-way packet into the database. The data is escaped before it is put into the database.
+'''
 def handlePacket(raw):
     raw = raw.replace("\n", "\\n")
     data = raw.split("*")
@@ -90,7 +111,7 @@ def handlePacket(raw):
             maxDate = row[2]
     if maxID == -1:
         return
-    cursor.execute("INSERT INTO packet (payload_id,time,raw) VALUES (%s,NOW(),%s)", (maxID,raw,))
+    cursor.execute("INSERT INTO packet (payload_id,time,raw) VALUES (%s,NOW(),%s)", (maxID,db.escape_string(raw),))
     db.commit()
     with open("log.txt", "a+") as f:
             f.write("[PCKT LOGGED]"  + raw + "\n")

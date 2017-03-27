@@ -4,7 +4,6 @@
       <root url="jar://$PROJECT_DIR$/lib/pi4j-core-1.1.jar!/" />
       <root url="file://$PROJECT_DIR$/lib/pi4j-native-1.1-raspberrypi-static.so" />
     </CLASSES>
-    <JAVADOC />
     <SOURCES>
       <root url="jar://$PROJECT_DIR$/lib/pi4j-core-1.1-sources.jar!/" />
     </SOURCES>
