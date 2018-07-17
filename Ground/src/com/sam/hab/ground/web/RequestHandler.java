@@ -8,7 +8,7 @@ import java.nio.charset.StandardCharsets;
 
 public class RequestHandler {
 
-    String server = "http://212.250.101.219:8080/";
+    String server = "http://localhost:8080/";
 
     /**
      * Sends telemetry to my server for forwarding to habitat tracker.
